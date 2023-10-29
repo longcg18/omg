@@ -1,0 +1,7 @@
+<div class="item-container">
+    <div *ngFor="let item of itemList; let i = index">
+      <app-item class="item" [itemId]="item.id"></app-item>
+      <div *ngIf="i % 4 === 3 || i === itemList.length - 1" class="clearfix"></div>
+    </div>
+</div>
+  

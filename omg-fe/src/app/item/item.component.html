@@ -1,0 +1,23 @@
+<p-card header="Plate Number" [style]="{ width: '300px' , border: '2px solid black', margin: '20px'}"><ng-template pTemplate="header">
+    <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png" />
+</ng-template>
+<p>
+    {{this.item.plateNumber}}
+    Likes: {{likeCounter}}
+</p>
+<p>
+    Thời gian hiện tại: {{this.currentTime | date: 'HH:mm:ss'}}
+</p>
+<p>
+    Thời gian bắt đầu: {{this.startTime | date: 'HH:mm:ss'}}
+</p>
+<ng-template pTemplate="footer">
+    <p-button id="LikeButton" icon="pi pi-thumbs-up" (click)="likeButtonClicked()" [disabled]="available"></p-button>
+    <p-button id="DisLikeButton" icon="pi pi-thumbs-down" (click)="disLikeButtonClicked()" [disabled]="available"></p-button>
+
+    <p-button id="SaveButton" icon="pi pi-save" (click)="saveButtonClicked()" [disabled]="available"></p-button>
+    
+    <p-button id="CancelButton" icon="pi pi-times" (click)="cancelButtonClicked()"></p-button>
+
+</ng-template>
+</p-card>
