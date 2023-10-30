@@ -13,6 +13,8 @@ const saveOne = 'http://localhost:3000/item/';
 
 const getAllItems = 'http://localhost:3000/item/';
 
+const createOneItem = 'http://localhost:3000/item/'
+
 @Injectable({
     providedIn: 'root'
 })
@@ -31,5 +33,10 @@ export class ItemService {
 
     getAllItems():Observable<Item[]> {
         return this.httpClient.get<Item[]>(getAllItems).pipe();
+    }
+
+    createOne(item: any) {
+        console.log(item);
+        return this.httpClient.post(createOneItem, item).subscribe();
     }
 }

@@ -1,8 +1,37 @@
-<div class="timer">
-  <p>
-    Đồng hồ: {{this.currentTime | date: 'HH:mm:ss'}} GMT+7
-</p>
+<div class="card">
+  <p-menubar [model]="menuItems">
+      <ng-template pTemplate="start">
+          <img src="https://primefaces.org/cdn/primeng/images/primeng.svg" height="40" class="mr-2" />
+      </ng-template>
+      <ng-template pTemplate="end">
+        <div class="timer">
+          <p>
+            Đồng hồ: {{this.currentTime | date: 'HH:mm:ss'}} GMT+7
+          </p>
+        </div>
+        
+          <input type="text" pInputText placeholder="Search" class="w-full" />
+      </ng-template>
+      
+  </p-menubar>
+
 </div>
+
+<div *ngIf="hasShowItemForm" class="card-like">
+  <form>
+    <p>
+      <input type="text" placeholder="Biển số" [(ngModel)]="newItem.plateNumber" name="plateNumber">
+    </p>
+    <p>
+      <input type="text" placeholder="Likes" [(ngModel)]="newItem.likes" name="likes">
+    </p>
+    <p>
+      <p-calendar [(ngModel)]="newItem.time" name="DateTimePicker" [showTime]="true" [showSeconds]="true"></p-calendar>
+    </p>
+    <button type="submit" (click)="createItem()">Submit</button>
+  </form>
+</div>
+
 <div class="item-container">
     <div *ngFor="let item of itemList; let i = index">
       <app-item class="item" [itemId]="item.id"></app-item>
@@ -10,3 +39,4 @@
     </div>
 </div>
   
+
