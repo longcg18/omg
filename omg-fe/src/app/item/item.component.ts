@@ -10,10 +10,11 @@ export class ItemComponent implements OnInit{
   @Input() itemId!: number;
   likeCounter!: number;
   item!: Item;
-  available: boolean = false;
+  buttonDisabled: boolean = false;
   currentTime: Date = new Date();
-
-  startTime!: Date;
+  closeTime!: Date;
+  plateNumber!: string;
+  sessionDuration!: any;
 
   constructor(
     private itemService: ItemService) {}
@@ -21,8 +22,10 @@ export class ItemComponent implements OnInit{
   ngOnInit(): void {
     this.itemService.getOne(this.itemId).subscribe((res: any) => {
       this.item = res || null;
+      this.plateNumber = this.item.plateNumber;
       this.likeCounter = this.item.likes || 0;
-      this.startTime = new Date (this.item.time);
+      this.closeTime = new Date (this.item.time);
+      
     });
     setInterval(() => {
       this.updateTime();
@@ -38,10 +41,10 @@ export class ItemComponent implements OnInit{
   }
 
   cancelButtonClicked() {
-    if (this.available == true) {
-      this.available = false;
+    if (this.buttonDisabled == true) {
+      this.buttonDisabled = false;
     } else {
-      this.available = true;
+      this.buttonDisabled = true;
     }
   }
 
@@ -52,5 +55,19 @@ export class ItemComponent implements OnInit{
 
   updateTime() {
     this.currentTime = new Date();
+    let diffTime = this.closeTime.getTime() - this.currentTime.getTime();
+
+    if (this.currentTime.getTime() < this.closeTime.getTime()) {
+
+      const minutes = Math.floor(diffTime / 60000);
+      const seconds = ((diffTime % 60000) / 1000).toFixed(0);
+      const hours = Math.floor(diffTime / 3600000);
+      const timeDisplay = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      this.sessionDuration = timeDisplay;
+    } else {
+      this.sessionDuration = "Đã kết thúc";
+      this.buttonDisabled = true;
+
+    }
   }
 }

@@ -9,12 +9,20 @@ import { ItemService } from '../../service/itemService';
 })
 export class DashboardComponent implements OnInit {
   itemList!: Item[]; 
-
+  currentTime!: Date;
   constructor(private itemService: ItemService) {}
 
   ngOnInit(): void {
     this.itemService.getAllItems().subscribe((res: any) => {
       this.itemList = res;
     })
+
+    setInterval(()=>{
+      this.updateTime()
+    }, 1000)
+  }
+
+  updateTime() {
+    this.currentTime = new Date();
   }
 }

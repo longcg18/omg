@@ -1,3 +1,8 @@
+<div class="timer">
+  <p>
+    Đồng hồ: {{this.currentTime | date: 'HH:mm:ss'}} GMT+7
+</p>
+</div>
 <div class="item-container">
     <div *ngFor="let item of itemList; let i = index">
       <app-item class="item" [itemId]="item.id"></app-item>
