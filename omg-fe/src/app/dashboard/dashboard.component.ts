@@ -161,5 +161,6 @@ export class DashboardComponent implements OnInit {
     //this.newItem.time = this.currentTime.toDateString();
     console.log(this.newItem);
     this.itemService.createOne(this.newItem);
+    window.location.reload();
   }
 }

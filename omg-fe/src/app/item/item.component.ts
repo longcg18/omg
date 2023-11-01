@@ -9,7 +9,7 @@ import { ItemService } from '../../service/itemService';
 export class ItemComponent implements OnInit{
   @Input() itemId!: number;
   likeCounter!: number;
-  item!: Item;
+  public item!: Item;
   buttonDisabled: boolean = false;
   currentTime: Date = new Date();
   closeTime!: Date;
@@ -25,8 +25,12 @@ export class ItemComponent implements OnInit{
       this.plateNumber = this.item.plateNumber;
       this.likeCounter = this.item.likes || 0;
       this.closeTime = new Date (this.item.time);
-      
     });
+
+      this.itemService.socket.on('updated', (updatedItem: any) => {
+          this.updateLikes(updatedItem.likes);
+      })
+  
     setInterval(() => {
       this.updateTime();
     }, 1000);
@@ -50,24 +54,33 @@ export class ItemComponent implements OnInit{
 
   saveButtonClicked() {
     this.item.likes = this.likeCounter;
-    this.itemService.saveOne(this.item);
+    this.itemService.saveOne(this.item).subscribe((res: any) => {
+      this.likeCounter = res.likes;
+      console.log(res.likes);
+    });
   }
 
   updateTime() {
     this.currentTime = new Date();
     let diffTime = this.closeTime.getTime() - this.currentTime.getTime();
-
-    if (this.currentTime.getTime() < this.closeTime.getTime()) {
-
-      const minutes = Math.floor(diffTime / 60000);
-      const seconds = ((diffTime % 60000) / 1000).toFixed(0);
+  
+    if (this.currentTime.getTime() < this.closeTime.getTime() && diffTime > 0) {
       const hours = Math.floor(diffTime / 3600000);
-      const timeDisplay = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-      this.sessionDuration = timeDisplay;
+      const minutes = Math.floor((diffTime % 3600000) / 60000);
+      const seconds = Math.floor((diffTime % 60000) / 1000);
+  
+      const formattedHours = hours.toString().padStart(2, '0');
+      const formattedMinutes = minutes.toString().padStart(2, '0');
+      const formattedSeconds = seconds.toString().padStart(2, '0');
+  
+      this.sessionDuration = `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
     } else {
       this.sessionDuration = "Đã kết thúc";
       this.buttonDisabled = true;
-
     }
+  }  
+
+  updateLikes(newLikes: number) {
+    this.likeCounter = newLikes;
   }
 }

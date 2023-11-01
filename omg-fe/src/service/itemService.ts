@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable,of} from 'rxjs';
 import { Item } from '../app/item/item';
+import { Socket } from 'ngx-socket-io';
 
 const httpOptions ={
     headers:new HttpHeaders({'Content-Type':'Application/json'})
@@ -19,16 +20,18 @@ const createOneItem = 'http://localhost:3000/item/'
     providedIn: 'root'
 })
 export class ItemService {
-    constructor(private httpClient: HttpClient) {
-    
+    constructor(private httpClient: HttpClient, public socket: Socket) {
     }
 
     getOne(id: any):Observable<Item> {
         return this.httpClient.get<Item>(getOneItem + id).pipe();
     }
 
-    saveOne(item: Item) {
-        return this.httpClient.put(saveOne, item).subscribe();
+    saveOne(item: Item): Observable<Item> {
+        this.socket.emit('like', {
+            item
+        });
+        return this.socket.fromEvent<Item>('updated').pipe();
     }
 
     getAllItems():Observable<Item[]> {
