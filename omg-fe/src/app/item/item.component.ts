@@ -1,10 +1,18 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, forwardRef } from '@angular/core';
 import { Item } from './item';
 import { ItemService } from '../../service/itemService';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 @Component({
   selector: 'app-item',
   templateUrl: './item.component.html',
-  styleUrls: ['./item.component.css']
+  styleUrls: ['./item.component.css'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => ItemComponent),  // replace name as appropriate
+      multi: true
+    }
+  ]
 })
 export class ItemComponent implements OnInit{
   @Input() itemId!: number;
@@ -23,8 +31,7 @@ export class ItemComponent implements OnInit{
     this.itemService.getOne(this.itemId).subscribe((res: any) => {
       this.item = res || null;
       this.plateNumber = this.item.plateNumber;
-      this.likeCounter = this.item.likes || 0;
-      this.closeTime = new Date (this.item.time);
+      //this.closeTime = new Date (this.item.time);
     });
 
       this.itemService.socket.on('updated', (updatedItem: any) => {
@@ -53,7 +60,7 @@ export class ItemComponent implements OnInit{
   }
 
   saveButtonClicked() {
-    this.item.likes = this.likeCounter;
+    //this.item.likes = this.likeCounter;
     this.itemService.saveOne(this.item).subscribe((res: any) => {
       this.likeCounter = res.likes;
       console.log(res.likes);

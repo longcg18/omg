@@ -42,4 +42,5 @@ export class ItemService {
         console.log(item);
         return this.httpClient.post(createOneItem, item).subscribe();
     }
+    
 }

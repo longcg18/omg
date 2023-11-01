@@ -1,28 +1,58 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, forwardRef } from '@angular/core';
 import { Item } from '../item/item';
 import { ItemService } from '../../service/itemService';
 import { MenuItem } from 'primeng/api';
-import { FormBuilder } from '@angular/forms';
+import { Session } from '../session/session';
+import { SessionService } from 'src/service/sessionService';
+import { FormArray, FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  styleUrls: ['./dashboard.component.css'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => DashboardComponent),  // replace name as appropriate
+      multi: true
+    }
+  ]
 })
 export class DashboardComponent implements OnInit {
   itemList!: Item[]; 
+  sessionList!: Session[];
   currentTime!: Date;
-  menuItems!: MenuItem[] ;
+  menuItems!: MenuItem[];
   hasShowItemForm: boolean = false;
+  hasShowSessionForm: boolean = false;
 
   newItem: Item = {
-    plateNumber: "",
-    id: 0,
-    likes: 0,
-    time: ''
+      plateNumber: "",
+      id: 0,
+      type: '',
+      vendor: null,
+      status: null
   };
 
-  constructor(private itemService: ItemService, formBuilder: FormBuilder) {}
+  currentItem!: Item;
+
+
+
+  itemIdPicker!: number;
+
+  newSession: Session = {
+      id: 0,
+      startTime: '',
+      closeTime: '',
+      initiatePrice: 100000,
+      reversePrice: 1000000,
+      stepPrice: 20000,
+      currentPrice: 0,
+      item: this.currentItem
+  }
+
+  constructor(private itemService: ItemService, private sessionService: SessionService) {
+  }
 
   ngOnInit(): void {
     this.menuItems = [
@@ -105,22 +135,13 @@ export class DashboardComponent implements OnInit {
         ]
     },
     {
-        label: 'Events',
+        label: 'Sessions',
         icon: 'pi pi-fw pi-calendar',
         items: [
             {
-                label: 'Edit',
-                icon: 'pi pi-fw pi-pencil',
-                items: [
-                    {
-                        label: 'Save',
-                        icon: 'pi pi-fw pi-calendar-plus'
-                    },
-                    {
-                        label: 'Delete',
-                        icon: 'pi pi-fw pi-calendar-minus'
-                    }
-                ]
+                label: 'New',
+                icon: 'pi pi-fw pi-calendar-plus',
+                command: () => this.showSessionForm()
             },
             {
                 label: 'Archieve',
@@ -140,9 +161,13 @@ export class DashboardComponent implements OnInit {
     }
     ]
 
-    this.itemService.getAllItems().subscribe((res: any) => {
-      this.itemList = res;
+    this.sessionService.getAllSessions().subscribe((res: any) => {
+        this.sessionList = res;
     })
+
+    // this.itemService.getAllItems().subscribe((res: any) => {
+    //   this.itemList = res;
+    // })
 
     setInterval(()=>{
       this.updateTime()
@@ -157,10 +182,36 @@ export class DashboardComponent implements OnInit {
     this.hasShowItemForm = true;
   }
 
+  showSessionForm() {
+    this.hasShowSessionForm = true;
+  }
+
   createItem() {
     //this.newItem.time = this.currentTime.toDateString();
     console.log(this.newItem);
     this.itemService.createOne(this.newItem);
     window.location.reload();
+  }
+
+  createSession() {
+    this.itemService.getOne(this.itemIdPicker).subscribe((res: any) => {
+        console.log(res);
+        this.currentItem = res;
+
+        var newSession: Session = {
+            id: 0,
+            startTime: this.newSession.startTime,
+            closeTime: this.newSession.closeTime,
+            initiatePrice: this.newSession.initiatePrice,
+            reversePrice: this.newSession.reversePrice,
+            stepPrice: this.newSession.reversePrice,
+            currentPrice: 0,
+            item: this.currentItem
+        }
+        this.sessionService.createOne(newSession);
+    })
+    //console.log(this.newSession);
+    
+    //window.location.reload();
   }
 }

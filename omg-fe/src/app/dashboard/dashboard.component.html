@@ -23,20 +23,49 @@
       <input type="text" placeholder="Biển số" [(ngModel)]="newItem.plateNumber" name="plateNumber">
     </p>
     <p>
-      <input type="text" placeholder="Likes" [(ngModel)]="newItem.likes" name="likes">
-    </p>
-    <p>
-      <p-calendar [(ngModel)]="newItem.time" name="DateTimePicker" [showTime]="true" [showSeconds]="true"></p-calendar>
+      <input type="text" placeholder="Hãng xe" [(ngModel)]="newItem.vendor" name="vendor">
     </p>
     <button type="submit" (click)="createItem()">Submit</button>
   </form>
 </div>
 
-<div class="item-container">
+<div *ngIf="hasShowSessionForm" class="card-like">
+  <form>
+    <p>
+     Giá mua thẳng <input type="number" placeholder="Giá mua thẳng" [(ngModel)]="newSession.reversePrice" name="reversePrice">
+    </p>
+    <p>
+     Giá khởi điểm <input type="number" placeholder="Giá khởi điểm" [(ngModel)]="newSession.initiatePrice" name="initPrice">
+    </p>
+    <p>
+     Bước nhảy giá <input type="number" placeholder="Bước nhảy giá" [(ngModel)]="newSession.stepPrice" name="stepPrice">
+    </p>
+    <p>
+     Thời điểm bắt đầu <p-calendar [(ngModel)]="newSession.startTime" name="StartTimePicker" [showTime]="true" [showSeconds]="true"></p-calendar>
+    </p>
+    <p>
+     Thời điểm kết thúc <p-calendar [(ngModel)]="newSession.closeTime" name="CloseTimePicker" [showTime]="true" [showSeconds]="true"></p-calendar>
+    </p>
+    <p>
+     Item id <input type="number" placeholder="Item id" [(ngModel)]="itemIdPicker" name="ItemPicker">
+    </p>
+    <button type="submit" (click)="createSession()">Submit</button>
+  </form>
+</div>
+
+<div class="session-container">
+  <div *ngFor="let session of sessionList; let i = index">
+      <app-session class="session" [sessionId]="session.id" ngDefaultControl="true"></app-session>
+      <div *ngIf="i%4 === 3 || i === sessionList.length - 1" class="clearfix"></div>
+  </div>
+</div>
+
+
+<!--div class="item-container">
     <div *ngFor="let item of itemList; let i = index">
       <app-item class="item" [itemId]="item.id"></app-item>
       <div *ngIf="i % 4 === 3 || i === itemList.length - 1" class="clearfix"></div>
     </div>
-</div>
+</div-->
   
 
