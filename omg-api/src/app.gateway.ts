@@ -15,7 +15,7 @@ import { OnModuleInit } from '@nestjs/common';
 import { from, map } from 'rxjs';
 import { ItemService } from './item/item.service';
 import { Item } from './item/item.entity';
-
+import { SessionService } from './session/session.service';
   @WebSocketGateway({
     cors: {
       origin: 
@@ -27,7 +27,7 @@ import { Item } from './item/item.entity';
   })
 export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
   constructor(
-    private itemService: ItemService
+    private sessionService: SessionService
     ) {}
   async onModuleInit() {
     //throw new Error('Method not implemented.');
@@ -36,21 +36,18 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   @WebSocketServer() server: Server;
 
 
-  @SubscribeMessage('like')
+  @SubscribeMessage('setPrice')
   async handleSendMessage(client: Socket, payload: any): Promise<void> {
     //await this.itemService.update(payload);
     
-    let updateItem: Item = {
-      id: payload.item.id,
-      plateNumber: payload.item.plateNumber,
-      likes: payload.item.likes,
-      time: payload.item.time
-    }
-    this.server.emit('updated', updateItem);
+    //let updateItem = payload.item;
+    let updateSession = payload.session;
+    await this.sessionService.updateSessionInDatabase(updateSession.id, { currentPrice: updateSession.price})
+    this.server.emit('updatedPrice', updateSession);
 
-    await this.itemService.updateItemInDatabase(updateItem.id, { likes:updateItem.likes });
+    //await this.itemService.updateItemInDatabase(updateItem.id, { likes:updateItem.likes });
 
-    console.log(payload, updateItem);
+    //console.log(payload, updateItem);
   }
 
 

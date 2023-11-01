@@ -28,17 +28,7 @@ export class ItemService {
     }
 
     async update(item: Item): Promise<UpdateResult> {
-        //console.log(item);
-        let _id = item.id;
-        return await this.itemRepo.update({
-            id: _id
-        }, {
-            plateNumber: item.plateNumber,
-            time: item.time,
-            likes: item.likes
-        })
         return await this.itemRepo.update(item.id, item);
-    
     }
 
     async updateItemInDatabase(_id: number, updatedFields: Partial<Item>): Promise<Item | undefined> {
@@ -50,11 +40,11 @@ export class ItemService {
                 const updatedItem = await this.itemRepo.findOneBy({id: _id});
                 return updatedItem;
             }
-    
-          return undefined; // Trả về undefined nếu không tìm thấy item
+
+            return undefined; // Trả về undefined nếu không tìm thấy item
         } catch (error) {
-          console.error('Error updating item:', error);
-          throw new Error('Error updating item in the database');
+            console.error('Error updating item:', error);
+            throw new Error('Error updating item in the database');
+            }
         }
-      }
 }
