@@ -3,7 +3,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ItemModule } from './item/item.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
+import { WebSocketServer } from '@nestjs/websockets';
+import { AppGateway } from './app.gateway';
+//import { }
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -16,8 +18,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true
     }),
-    ItemModule],
+    ItemModule,
+    
+  ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AppGateway],
 })
 export class AppModule {}

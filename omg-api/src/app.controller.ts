@@ -1,5 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Sse } from '@nestjs/common';
 import { AppService } from './app.service';
+import { interval } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Controller()
 export class AppController {
@@ -8,5 +10,10 @@ export class AppController {
   @Get()
   getHello(): string {
     return this.appService.getHello();
+  }
+
+  @Sse('sse')
+  testSee() {
+    return interval(3000).pipe(map((_) => ({ data: { hello: 'world' } })));
   }
 }

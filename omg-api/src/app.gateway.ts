@@ -1,0 +1,80 @@
+import {
+    SubscribeMessage,
+    WebSocketGateway,
+    OnGatewayInit,
+    WebSocketServer,
+    OnGatewayConnection,
+    OnGatewayDisconnect,
+    ConnectedSocket,
+    MessageBody,
+  } from '@nestjs/websockets';
+  import { Socket, Server } from 'socket.io';
+//import { ItemService } from '../src/item/item.service';
+//import { Item } from '../src/item/item.entity';
+import { OnModuleInit } from '@nestjs/common';
+import { from, map } from 'rxjs';
+import { ItemService } from './item/item.service';
+import { Item } from './item/item.entity';
+
+  @WebSocketGateway({
+    cors: {
+      origin: 
+        ['http://localhost:4200',
+        'http://localhost:3000'  
+      ]
+      ,
+    },
+  })
+export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
+  constructor(
+    private itemService: ItemService
+    ) {}
+  async onModuleInit() {
+    //throw new Error('Method not implemented.');
+  }
+
+  @WebSocketServer() server: Server;
+
+
+  @SubscribeMessage('like')
+  async handleSendMessage(client: Socket, payload: any): Promise<void> {
+    //await this.itemService.update(payload);
+    
+    let updateItem: Item = {
+      id: payload.item.id,
+      plateNumber: payload.item.plateNumber,
+      likes: payload.item.likes,
+      time: payload.item.time
+    }
+    this.server.emit('updated', updateItem);
+
+    await this.itemService.updateItemInDatabase(updateItem.id, { likes:updateItem.likes });
+
+    console.log(payload, updateItem);
+  }
+
+
+  @SubscribeMessage('events')
+  doStuff(@MessageBody() data: any, @ConnectedSocket() client: Socket) {
+    console.log('client', client);
+    return { event: 'events', data };
+    return from([1, 2, 3]).pipe(
+      map((item) => ({ event: 'events', data: item })),
+    );
+  }
+
+  async afterInit(server: Server) {
+    console.log(server);
+    //Do stuffs
+  }
+
+  async handleDisconnect(client: Socket) {
+    console.log(`Disconnected: ${client.id}`);
+    //Do stuffs
+  }
+
+  async handleConnection(client: Socket, ...args: any[]) {
+    console.log(`Connected ${client.id}`);
+    //Do stuffs
+  }
+}

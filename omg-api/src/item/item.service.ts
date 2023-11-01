@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { Item } from './item.entity';
 import { InjectRepository} from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
+//import { SocketGateway } from 'src/socketGateway';
 
 @Injectable()
 export class ItemService {
     constructor(
         @InjectRepository(Item)
-        private readonly itemRepo: Repository<Item>,
+        private readonly itemRepo: Repository<Item>
     ) {}
     
     async findAll(): Promise<Item[]> {
@@ -27,6 +28,33 @@ export class ItemService {
     }
 
     async update(item: Item): Promise<UpdateResult> {
+        //console.log(item);
+        let _id = item.id;
+        return await this.itemRepo.update({
+            id: _id
+        }, {
+            plateNumber: item.plateNumber,
+            time: item.time,
+            likes: item.likes
+        })
         return await this.itemRepo.update(item.id, item);
+    
     }
+
+    async updateItemInDatabase(_id: number, updatedFields: Partial<Item>): Promise<Item | undefined> {
+        try {
+            const existingItem = await this.itemRepo.createQueryBuilder("item").select(["item"]).where("item.id=:id", {id: _id}).getOne();
+            console.log('Existing', _id,  existingItem);
+            if (existingItem) {
+                await this.itemRepo.update(_id, updatedFields);
+                const updatedItem = await this.itemRepo.findOneBy({id: _id});
+                return updatedItem;
+            }
+    
+          return undefined; // Trả về undefined nếu không tìm thấy item
+        } catch (error) {
+          console.error('Error updating item:', error);
+          throw new Error('Error updating item in the database');
+        }
+      }
 }
