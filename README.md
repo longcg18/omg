@@ -1,6 +1,10 @@
 # OMG
  Our task is to build an license plate auction system
 
+
+- Không được tự ý merge code
+- Không commit vào branch main
+- Clean code trước khi commit
 ### 1. About the framework used 
 
 #### BackEnd 
