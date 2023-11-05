@@ -17,8 +17,13 @@ export class UserService {
       async findOne(_id: number): Promise<User> {
         return await this.usersRepo.findOneBy({id: _id});
       }
+
+      async findByUsername(_username: string): Promise<User> {
+        return await this.usersRepo.findOneBy({username: _username});
+      }
     
       async create(user: User): Promise<User> {
+
         return await this.usersRepo.save(user);
       }
     

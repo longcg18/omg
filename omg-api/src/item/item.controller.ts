@@ -16,6 +16,11 @@ export class ItemController {
     return this.itemService.findOne(id);
   }
 
+  @Get('owner/:id')
+  findByUserId(@Param('id')id: number): Promise<Item[]> {
+    return this.itemService.findByOwnerId(id);
+  }
+
   @Post()
   create(@Body() item: Item) {
     return this.itemService.create(item);

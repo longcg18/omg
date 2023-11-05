@@ -15,18 +15,25 @@ export class Item {
     @Column({default: 0})
     likes: number;
 
+    @Column({nullable: false, unique: true})
+    ownershipNumber: string;
+
     @Column({default: 'Motorbike', charset: 'utf8', collation: 'utf8_general_ci'})
     type: string;
 
     @Column({default: 'Honda'})
     vendor: string;
 
-    //@Column({type: 'timestamp'})
-    //time: Timestamp;
+    //@Column({type: ''})
+    @Column({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
+    created_at: Timestamp;
 
     @ManyToOne(() => User, (user) => user.items)
     @JoinColumn()
     public owner: User;
+
+    @Column({nullable: true})
+    ownerId: number;
     
     @OneToOne(() => Session, (session) => session.item) 
     @JoinColumn()

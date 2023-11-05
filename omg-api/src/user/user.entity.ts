@@ -11,20 +11,23 @@ export class User {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({nullable: false})
     username: string;
     
-    @Column()
+    @Column({nullable: false})
     password: string;
 
     @Column({nullable: true, charset: 'utf8', collation: 'utf8_general_ci'})
-    fullname: string;
+    name: string;
 
     @Column({nullable: true})
     phoneNumber: string;
 
     @Column({nullable: true})
     email: string;
+
+    @Column({default: 1})
+    role: number; // 0 - admin , 1 - user
 
     @Column({nullable: true, charset: 'utf8', collation: 'utf8_general_ci'})
     address: string;

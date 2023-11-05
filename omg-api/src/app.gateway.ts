@@ -42,7 +42,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     
     //let updateItem = payload.item;
     let updateSession = payload.session;
-    await this.sessionService.updateSessionInDatabase(updateSession.id, { currentPrice: updateSession.price})
+    await this.sessionService.updateSessionInDatabase(updateSession.id, { currentPrice: updateSession.currentPrice})
     this.server.emit('updatedPrice', updateSession);
 
     //await this.itemService.updateItemInDatabase(updateItem.id, { likes:updateItem.likes });

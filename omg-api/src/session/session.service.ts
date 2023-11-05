@@ -11,10 +11,11 @@ export class SessionService {
     ) {}
   
     async findAll(): Promise<Session[]> {
-      return await this.sessionsRepo.createQueryBuilder("session").leftJoin("session.item", "item").select(["session","item"]).getMany();
-
-
-      return await this.sessionsRepo.find();
+      return await this.sessionsRepo.createQueryBuilder("session").leftJoin("session.item", "item")
+        .where('session.closeTime>CURRENT_TIMESTAMP')
+        .select(["session","item"])
+        .getMany();
+      //return await this.sessionsRepo.find();
     }
   
     async findOne(_id: number): Promise<Session> {
@@ -22,15 +23,15 @@ export class SessionService {
       return await this.sessionsRepo.createQueryBuilder("session").leftJoin("session.item", "item").select(["session","item"]).where("session.id=:id", {id: _id}).getOne();
 
 
-      return await this.sessionsRepo.findOneBy({id: _id});
+      //return await this.sessionsRepo.findOneBy({id: _id});
     }
   
     async create(session: Session): Promise<Session> {
       return await this.sessionsRepo.save(session);
     }
   
-    async update(hostpital : Session): Promise<UpdateResult> {
-      return await this.sessionsRepo.update(hostpital.id, hostpital);
+    async update(session : Session): Promise<UpdateResult> {
+      return await this.sessionsRepo.update(session.id, session);
     }
   
     async delete(id: number): Promise<DeleteResult> {
