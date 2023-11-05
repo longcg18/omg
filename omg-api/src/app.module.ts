@@ -5,6 +5,11 @@ import { ItemModule } from './item/item.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WebSocketServer } from '@nestjs/websockets';
 import { AppGateway } from './app.gateway';
+import { UserModule } from './user/user.module';
+import { TransactionModule } from './transaction/transaction.module';
+import { SessionModule } from './session/session.module';
+import { OrderModule } from './order/order.module';
+import { AuthModule } from './auth/auth.module';
 //import { }
 @Module({
   imports: [
@@ -19,6 +24,11 @@ import { AppGateway } from './app.gateway';
       synchronize: true
     }),
     ItemModule,
+    UserModule,
+    TransactionModule,
+    SessionModule,
+    OrderModule,
+    AuthModule,
     
   ],
   controllers: [AppController],
