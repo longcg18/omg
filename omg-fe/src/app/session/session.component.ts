@@ -3,6 +3,7 @@ import { Item } from '../item/item';
 import { SessionService } from 'src/service/sessionService';
 import { Session } from './session';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-session',
@@ -23,7 +24,7 @@ export class SessionComponent implements OnInit {
   public session!: Session;
   item!: Item;
 
-  plateNumber: string = '00A-00000';
+  plateNumber!: string;
 
   buttonDisabled: boolean = false;
 
@@ -70,7 +71,9 @@ export class SessionComponent implements OnInit {
 
   saveButtonClicked() {
     this.session.currentPrice = this.currentPrice;
-    this.sessionService.saveOne(this.session);
+    this.sessionService.saveOne(this.session).subscribe((res:any) => {
+      this.currentPrice = res.currentPrice;
+    });
   }
 
   updateTime() {

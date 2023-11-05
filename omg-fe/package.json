@@ -18,6 +18,7 @@
     "@angular/platform-browser": "^16.2.0",
     "@angular/platform-browser-dynamic": "^16.2.0",
     "@angular/router": "^16.2.0",
+    "@auth0/angular-jwt": "^5.2.0",
     "@syncfusion/ej2-angular-calendars": "^23.1.41",
     "@syncfusion/ej2-angular-grids": "^23.1.42",
     "ngx-socket-io": "^4.5.1",

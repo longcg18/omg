@@ -11,10 +11,16 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { MenuModule } from 'primeng/menu';
 import { MenubarModule } from 'primeng/menubar';
 import { CalendarModule } from 'primeng/calendar';
-import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { SessionComponent } from './session/session.component';
+import { DropdownModule } from 'primeng/dropdown';
+import { UserComponent } from './user/user.component';
+import { SignupModule } from './user/signup.module';
+import { RouterModule } from '@angular/router';
+import { SigninModule } from './user/signin.module';
+import { JWT_OPTIONS, JwtHelperService } from '@auth0/angular-jwt';
 
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
 
@@ -23,10 +29,12 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     AppComponent,
     ItemComponent,
     DashboardComponent,
-    SessionComponent
+    SessionComponent,
+    UserComponent
   ],
   imports: [
     BrowserModule,
+    RouterModule,
     AppRoutingModule,
     CardModule,
     MenuModule,
@@ -36,9 +44,18 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     HttpClientModule,
     FormsModule,
     BrowserAnimationsModule,
-    SocketIoModule.forRoot(config)
+    DropdownModule,
+    ReactiveFormsModule,
+    SignupModule,
+    SigninModule,
+    SocketIoModule.forRoot(config),
+    SigninModule,
+    SignupModule
   ],
-  providers: [],
+  providers: [JwtHelperService, {
+    provide: JWT_OPTIONS,
+    useValue: JWT_OPTIONS
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

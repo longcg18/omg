@@ -4,7 +4,10 @@ import { ItemService } from '../../service/itemService';
 import { MenuItem } from 'primeng/api';
 import { Session } from '../session/session';
 import { SessionService } from 'src/service/sessionService';
-import { FormArray, FormBuilder, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { UserService } from 'src/service/userService';
+import { User } from '../user/user';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard',
@@ -26,17 +29,20 @@ export class DashboardComponent implements OnInit {
   hasShowItemForm: boolean = false;
   hasShowSessionForm: boolean = false;
 
+  showItem: boolean = false;
+  selectedItem!: Item;
   newItem: Item = {
       plateNumber: "",
       id: 0,
       type: '',
+      ownershipNumber: '',
       vendor: null,
       status: null
   };
 
-  currentItem!: Item;
+  currentItem!: Item ;
 
-
+  user: any = this.userService.getSigninUser();
 
   itemIdPicker!: number;
 
@@ -51,8 +57,12 @@ export class DashboardComponent implements OnInit {
       item: this.currentItem
   }
 
-  constructor(private itemService: ItemService, private sessionService: SessionService) {
+  formGroup!: FormGroup;
+
+  constructor(private itemService: ItemService, private sessionService: SessionService, public userService: UserService) {
   }
+
+
 
   ngOnInit(): void {
     this.menuItems = [
@@ -73,8 +83,9 @@ export class DashboardComponent implements OnInit {
                 separator: true
             },
             {
-                label: 'Export',
-                icon: 'pi pi-fw pi-external-link'
+                label: 'View my items',
+                icon: 'pi pi-fw pi-external-link',
+                command: () => this.showMyItem()
             }
         ]
     },
@@ -157,7 +168,8 @@ export class DashboardComponent implements OnInit {
     },
     {
         label: 'Quit',
-        icon: 'pi pi-fw pi-power-off'
+        icon: 'pi pi-fw pi-power-off',
+        command: () => this.logOut()
     }
     ]
 
@@ -165,9 +177,18 @@ export class DashboardComponent implements OnInit {
         this.sessionList = res;
     })
 
-    // this.itemService.getAllItems().subscribe((res: any) => {
-    //   this.itemList = res;
-    // })
+    this.itemService.getAllItemByUserId(this.user.id).subscribe((res: any) => {
+
+       this.itemList = res;
+       this.currentItem = this.itemList[0];
+
+    })
+
+    this.formGroup = new FormGroup({
+        itemSelector: new FormControl<Item> (this.selectedItem)
+        
+    })
+    //console.log(this.selectedItem);
 
     setInterval(()=>{
       this.updateTime()
@@ -189,29 +210,33 @@ export class DashboardComponent implements OnInit {
   createItem() {
     //this.newItem.time = this.currentTime.toDateString();
     console.log(this.newItem);
-    this.itemService.createOne(this.newItem);
+    this.itemService.createOne(this.newItem, this.user);
     window.location.reload();
   }
 
-  createSession() {
-    this.itemService.getOne(this.itemIdPicker).subscribe((res: any) => {
-        console.log(res);
-        this.currentItem = res;
+  logOut() {
+    this.userService.logout();
+  }
 
-        var newSession: Session = {
-            id: 0,
-            startTime: this.newSession.startTime,
-            closeTime: this.newSession.closeTime,
-            initiatePrice: this.newSession.initiatePrice,
-            reversePrice: this.newSession.reversePrice,
-            stepPrice: this.newSession.reversePrice,
-            currentPrice: 0,
-            item: this.currentItem
-        }
-        this.sessionService.createOne(newSession);
-    })
-    //console.log(this.newSession);
-    
-    //window.location.reload();
+  createSession() {
+    var newSession: Session = {
+        id: 0,
+        startTime: this.newSession.startTime,
+        closeTime: this.newSession.closeTime,
+        initiatePrice: this.newSession.initiatePrice,
+        reversePrice: this.newSession.reversePrice,
+        stepPrice: this.newSession.reversePrice,
+        currentPrice: 0,
+        item: this.formGroup.get('itemSelector')?.value
+    }
+    this.sessionService.createOne(newSession);
+    window.location.reload();
+  }
+
+  showMyItem() {
+    const itemContainer = document.getElementById("item-container");
+    if (itemContainer?.style.display==='none') {
+        itemContainer.style.display = '';        
+    }
   }
 }

@@ -18,7 +18,7 @@ const saveOne = 'http://localhost:3000/session/';
     providedIn: 'root'
 })
 export class SessionService {
-    constructor(private httpClient: HttpClient) {}
+    constructor(private httpClient: HttpClient, public socket: Socket) {}
 
     createOne(session: Session) {
         console.log(session);
@@ -29,8 +29,13 @@ export class SessionService {
         return this.httpClient.get<Session>(getOneSession + id).pipe();
     }
 
-    saveOne(session: Session) {
-        return this.httpClient.put(saveOne, session).subscribe();
+    saveOne(session: Session): Observable<Session> {
+        this.socket.emit('setPrice', {
+            session
+        });
+        return this.socket.fromEvent<Session>('updatedPrice').pipe();
+
+        //return this.httpClient.put(saveOne, session).subscribe();
     }
 
     getAllSessions(): Observable<Session[]> {
