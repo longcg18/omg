@@ -21,6 +21,7 @@ import { SignupModule } from './user/signup.module';
 import { RouterModule } from '@angular/router';
 import { SigninModule } from './user/signin.module';
 import { JWT_OPTIONS, JwtHelperService } from '@auth0/angular-jwt';
+import { TransactionComponent } from './transaction/transaction.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
 
@@ -30,7 +31,8 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     ItemComponent,
     DashboardComponent,
     SessionComponent,
-    UserComponent
+    UserComponent,
+    TransactionComponent
   ],
   imports: [
     BrowserModule,
