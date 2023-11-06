@@ -12,7 +12,6 @@ export class SessionService {
   
     async findAll(): Promise<Session[]> {
       return await this.sessionsRepo.createQueryBuilder("session").leftJoin("session.item", "item")
-        .where('session.closeTime>CURRENT_TIMESTAMP')
         .select(["session","item"])
         .getMany();
       //return await this.sessionsRepo.find();

@@ -16,6 +16,11 @@ export class TransactionController {
     return this.transactionsService.findAll();
   }
 
+  @Get('owner/:id')
+  findByOwnerId(@Param('id') id: any) {
+    return this.transactionsService.findByOwnerId(id);
+  } 
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.transactionsService.findOne(+id);

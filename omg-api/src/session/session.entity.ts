@@ -15,16 +15,16 @@ export class Session {
     @Column({type: 'timestamp'})
     closeTime: Timestamp;
 
-    @Column({nullable: true})
+    @Column({nullable: true, type: 'bigint'})
     initiatePrice: number;
 
-    @Column({nullable: true})
+    @Column({nullable: true, type: 'bigint'})
     reversePrice: number;
 
-    @Column({nullable: true})
+    @Column({nullable: true, type: 'bigint'})
     stepPrice: number;
 
-    @Column()
+    @Column({type: 'bigint'})
     currentPrice: number;
     
     @Column({nullable: true})

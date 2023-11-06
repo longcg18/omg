@@ -18,6 +18,15 @@ export class TransactionService {
         return await this.transactionsRepo.findOneBy({id: _id});
       }
     
+      async findByOwnerId(userId: any): Promise<Transaction[]> {
+        const res = await this.transactionsRepo.createQueryBuilder("transaction")
+          .leftJoin("transaction.user", "user")
+          .leftJoin("transaction.session", "session")
+          .select(["transaction", "user", "session"])
+          .where("user.id=:id", {id: userId})
+          .getMany();
+        return res; 
+      }
       async create(transaction: Transaction): Promise<Transaction> {
         return await this.transactionsRepo.save(transaction);
       }
