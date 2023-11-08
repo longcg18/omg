@@ -22,7 +22,8 @@ export class TransactionService {
         const res = await this.transactionsRepo.createQueryBuilder("transaction")
           .leftJoin("transaction.user", "user")
           .leftJoin("transaction.session", "session")
-          .select(["transaction", "user", "session"])
+          .leftJoin("session.item", "item")
+          .select(["transaction", "user", "session", "item.plateNumber"])
           .where("user.id=:id", {id: userId})
           .getMany();
         return res; 

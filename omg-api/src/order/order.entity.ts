@@ -17,7 +17,7 @@ export class Order {
 
     @OneToOne(() => Item, (item) => item.order)
     @JoinColumn()
-    item!: Item;
+    item: Item;
 
     @ManyToOne(() => User, (user) => user.orders)
     @JoinColumn()

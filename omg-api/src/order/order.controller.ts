@@ -21,6 +21,10 @@ export class OrderController {
     return this.ordersService.findOne(+id);
   }
 
+  @Get('owner/:id')
+  getAllByOwnerId(@Param('id') id: any) {
+    return this.ordersService.getAllByOwnerId(id);
+  }
   @Put()
   update(@Body() order: Order) {
     return this.ordersService.update(order);
