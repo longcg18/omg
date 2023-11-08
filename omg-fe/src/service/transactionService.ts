@@ -21,4 +21,9 @@ export class TransactionService {
     getAllTransaction(userId: any): Observable<Transaction[]> {
         return this.httpClient.get<Transaction[]>(saveOne + 'owner/' + userId).pipe();
     }
+
+
+    createTransaction(transaction: any) {
+        return this.httpClient.post(saveOne, transaction).subscribe();
+    }
 }

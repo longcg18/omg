@@ -35,13 +35,13 @@
 <div *ngIf="hasShowSessionForm" class="card-like">
   <form>
     <p>
-     Giá mua thẳng <input type="number" placeholder="Giá mua thẳng" [(ngModel)]="newSession.reversePrice" name="reversePrice">
+     Giá mua thẳng <input type="number" placeholder="Giá mua thẳng" [(ngModel)]="newSession.reversePrice" name="reversePrice"> triệu
     </p>
     <p>
-     Giá khởi điểm <input type="number" placeholder="Giá khởi điểm" [(ngModel)]="newSession.initiatePrice" name="initPrice">
+     Giá khởi điểm <input type="number" placeholder="Giá khởi điểm" [(ngModel)]="newSession.initiatePrice" name="initPrice"> triệu
     </p>
     <p>
-     Bước nhảy giá <input type="number" placeholder="Bước nhảy giá" [(ngModel)]="newSession.stepPrice" name="stepPrice">
+     Bước nhảy giá <input type="number" placeholder="Bước nhảy giá" [(ngModel)]="newSession.stepPrice" name="stepPrice"> triệu
     </p>
     <p>
      Thời điểm bắt đầu <p-calendar [(ngModel)]="newSession.startTime" name="StartTimePicker" [showTime]="true" [showSeconds]="true"></p-calendar>
@@ -63,18 +63,64 @@
   </form>
 </div>
 
-<div class="session-container">
+<div class="session-container" *ngIf="showSession">
   <div *ngFor="let session of sessionList; let i = index">
       <app-session class="session" [sessionId]="session.id" ngDefaultControl="true"></app-session>
       <div *ngIf="i%4 === 3 || i === sessionList.length - 1" class="clearfix"></div>
   </div>
 </div>
 
-<div class="item-container" ng-hide="showItem" id="item-container" style="display: none;">
+<div class="item-container" *ngIf="showItem" id="item-container">
   <div *ngFor="let item of itemList; let i = index">
     <app-item class="item" [itemId]="item.id"></app-item>
-    <div *ngIf="i % 4 === 3 || i === itemList.length - 1" class="clearfix"></div>
+    <div *ngIf="i%4 === 3 || i === itemList.length - 1" class="clearfix"></div>
   </div>
+</div>
+
+<div class="card" *ngIf="showTransaction">
+  <p-table [value]="transactionList" styleClass="p-datatable-gridlines" [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template pTemplate="caption"> Lịch sử giao dịch </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Id</th>
+            <th>Số tiền</th>
+            <th>Biển số</th>
+            <th>Thời gian</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-transaction>
+        <tr>
+            <td>{{ transaction.id }}</td>
+            <td>{{ transaction.money }}</td>
+            <td>{{ transaction.session.item.plateNumber }}</td>
+            <td>{{ transaction.created_at }}</td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="summary"> Tổng số tiền đã đặt: {{summary}} </ng-template>
+</p-table>
+</div>
+
+<div class="card" *ngIf="showOrder">
+  <p-table [value]="orderList" styleClass="p-datatable-gridlines" [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template pTemplate="caption"> Đơn hàng đã thắng </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Id</th>
+            <th>Số tiền</th>
+            <th>Biển số</th>
+            <th>Trạng thái</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-order>
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.currentPrice }}</td>
+            <td>{{ order.item.plateNumber }}</td>
+            <td>{{ order.status }}</td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="summery"> Tổng số tiền đã đặt: {{total}} </ng-template>
+</p-table>
 </div>
 
 <router-outlet></router-outlet>

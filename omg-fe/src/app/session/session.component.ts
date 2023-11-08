@@ -4,6 +4,10 @@ import { SessionService } from 'src/service/sessionService';
 import { Session } from './session';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { map } from 'rxjs';
+import { TransactionService } from 'src/service/transactionService';
+import { UserService } from 'src/service/userService';
+import { User } from '../user/user';
+import { OrderService } from 'src/service/orderService';
 
 @Component({
   selector: 'app-session',
@@ -36,10 +40,18 @@ export class SessionComponent implements OnInit {
   
   reversePrice!: number;
 
-  stepPrice: number = 10000;
+  stepPrice!: number;
+
+  status!: string;
+
+  winner!: User;
+  winnerInfo!: string;
 
   constructor(
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private transactionService: TransactionService,
+    private userService: UserService,
+    private orderService: OrderService
   ) {}
   ngOnInit(): void {
     this.sessionService.getOne(this.sessionId).subscribe((res:any) => {
@@ -51,14 +63,36 @@ export class SessionComponent implements OnInit {
       this.plateNumber = this.session.item.plateNumber;
       this.stepPrice = this.session.stepPrice;
       this.reversePrice = this.session.reversePrice;
-      //console.log(this.session.item);
+      this.winner = this.session.winner;
+          
+      this.status = this.session.status;
+
+      // if (this.closeTime < this.currentTime ) {
+      //   this.orderService.createOne({
+      //     item: this.item,
+      //     price: this.currentPrice,
+      //     user: this.winner
+      //   })
+      // }
+
+      if(this.session.winner != null) {
+        //console.log(this.winner);
+        this.winnerInfo = this.session.winner.name;
+      } else {
+        this.winnerInfo = 'Chưa rõ';
+      }
+      //console.log(this.session.winner);
     })
 
     //this.updateTime();
 
     setInterval(() => {
       this.updateTime();
-    }, 1000)
+      //this.updateSession();
+    }, 1000);
+
+
+    
   }
 
   likeButtonClicked() {
@@ -71,34 +105,54 @@ export class SessionComponent implements OnInit {
 
   saveButtonClicked() {
     this.session.currentPrice = this.currentPrice;
+    this.session.winner = <User>this.userService.getSigninUser();
+    this.session.status = this.status;
     this.sessionService.saveOne(this.session).subscribe((res:any) => {
+      //console.log(this.session);
       this.currentPrice = res.currentPrice;
+      
+      this.winner = res.winner;
+      this.transactionService.createTransaction({
+        money: this.currentPrice,
+        user: this.userService.getSigninUser(),
+        session: this.session
+      })
     });
   }
+
 
   updateTime() {
     this.currentTime = new Date();
     let diffTime = 0;
     let notify = "";
-
+    
     // clock configure 
     if (this.currentTime.getTime() < this.startTime.getTime() && 
     this.currentTime.getTime() - this.startTime.getTime() < 0) {
       diffTime = this.startTime.getTime() - this.currentTime.getTime();
       notify = "Bắt đầu sau: ";
       this.buttonDisabled = true;
+      this.status = "upcoming";
 
     } else if (this.currentTime.getTime() > this.startTime.getTime() 
       && this.currentTime.getTime() < this.closeTime.getTime() && 
       this.closeTime.getTime() - this.currentTime.getTime() > 0) {
         notify = "Kết thúc sau: ";
         diffTime = this.closeTime.getTime() - this.currentTime.getTime();
+        this.status = "opening"
     } else {
       notify = "Đã kết thúc được: ";
       diffTime = this.currentTime.getTime() - this.closeTime.getTime();
       this.buttonDisabled = true;
+      this.status = "closed"
     }
 
+
+    this.sessionService.autoUpdateSession().subscribe((res: any) => {
+      this.currentPrice = res.currentPrice;
+      this.winner = res.winner;
+      this.winnerInfo = res.winner.name;
+    })
     const hours = Math.floor(diffTime / 3600000);
     const minutes = Math.floor((diffTime % 3600000) / 60000);
     const seconds = Math.floor((diffTime % 60000) / 1000);
@@ -109,4 +163,14 @@ export class SessionComponent implements OnInit {
 
     this.sessionDuration = notify + `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
   }
+
+  // updateSession() {
+  //   this.sessionService.autoUpdateSession().subscribe((res: any) => {
+  //     this.currentPrice = res.currentPrice;
+  //     this.winner = res.winner;
+  //     this.winnerInfo = res.winner.name;
+
+      
+  //   })
+  // }
 }

@@ -29,7 +29,7 @@ export class SessionService {
         return this.httpClient.get<Session>(getOneSession + id).pipe();
     }
 
-    saveOne(session: Session): Observable<Session> {
+    saveOne(session: any): Observable<Session> {
         this.socket.emit('setPrice', {
             session
         });
@@ -38,7 +38,15 @@ export class SessionService {
         //return this.httpClient.put(saveOne, session).subscribe();
     }
 
+    getAllSessionsByWinnerId(userId: any): Observable<Session[]> {
+        return this.httpClient.get<Session[]>(saveOne + 'user/' + userId).pipe();
+    }
+
     getAllSessions(): Observable<Session[]> {
         return this.httpClient.get<Session[]>(saveOne).pipe();
+    }
+
+    autoUpdateSession(): Observable<Session> {
+        return this.socket.fromEvent<Session>('updatedPrice').pipe();
     }
 }

@@ -1,4 +1,5 @@
 import { Item } from "../item/item";
+import { User } from "../user/user";
 
 
 export interface Session {
@@ -12,4 +13,6 @@ export interface Session {
     currentPrice: number;
 
     item: Item;
+    winner: User;
+    status: string;
 }
