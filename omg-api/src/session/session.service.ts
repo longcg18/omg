@@ -11,20 +11,34 @@ export class SessionService {
     ) {}
   
     async findAll(): Promise<Session[]> {
-      return await this.sessionsRepo.createQueryBuilder("session").leftJoin("session.item", "item")
-        .select(["session","item"])
+      return await this.sessionsRepo.createQueryBuilder("session")
+        .leftJoin("session.item", "item")
+        .leftJoin("session.winner", "user")
+        .select(["session","item","user"])
         .getMany();
       //return await this.sessionsRepo.find();
     }
   
     async findOne(_id: number): Promise<Session> {
 
-      return await this.sessionsRepo.createQueryBuilder("session").leftJoin("session.item", "item").select(["session","item"]).where("session.id=:id", {id: _id}).getOne();
+      return await this.sessionsRepo.createQueryBuilder("session")
+      .leftJoin("session.item", "item")
+      .leftJoin("session.winner", "user")
+      .select(["session","item","user"])
+      .where("session.id=:id", {id: _id}).getOne();
 
 
       //return await this.sessionsRepo.findOneBy({id: _id});
     }
   
+    async findByUserId(_id: any): Promise<Session[]> {
+      return await this.sessionsRepo.createQueryBuilder("session")
+      .leftJoin("session.item", "item")
+      .leftJoin("session.winner", "user")
+      .select(["session","item","user"])
+      .where("user.id=:id", {id: _id}).getMany();
+    }
+
     async create(session: Session): Promise<Session> {
       return await this.sessionsRepo.save(session);
     }
@@ -38,9 +52,10 @@ export class SessionService {
     }
 
 
-    async updateSessionInDatabase(_id: number, updatedFields: Partial<Session>): Promise<Session | undefined> {
+    async updateSessionInDatabase(_id: number, updatedFields: any): Promise<Session | undefined> {
+      console.log(updatedFields);
       try {
-          const existingSession = await this.sessionsRepo.createQueryBuilder("session").select(["session"]).where("session.id=:id", {id: _id}).getOne();
+          const existingSession = await this.sessionsRepo.createQueryBuilder("session").leftJoin("session.winner", "user").select(["session", "user"]).where("session.id=:id", {id: _id}).getOne();
           console.log('Existing', _id,  existingSession);
           if (existingSession) {
               await this.sessionsRepo.update(_id, updatedFields);

@@ -8,6 +8,10 @@ import { FormArray, FormBuilder, FormControl, FormGroup, NG_VALUE_ACCESSOR } fro
 import { UserService } from 'src/service/userService';
 import { User } from '../user/user';
 import { DOCUMENT } from '@angular/common';
+import { TransactionService } from 'src/service/transactionService';
+import { Transaction } from '../transaction/transaction';
+import { OrderService } from 'src/service/orderService';
+import { Order } from '../order/order';
 
 @Component({
   selector: 'app-dashboard',
@@ -24,12 +28,24 @@ import { DOCUMENT } from '@angular/common';
 export class DashboardComponent implements OnInit {
   itemList!: Item[]; 
   sessionList!: Session[];
+  transactionList!: Transaction[];
+  orderList!: Session[];
+
+
   currentTime!: Date;
   menuItems!: MenuItem[];
+
   hasShowItemForm: boolean = false;
   hasShowSessionForm: boolean = false;
 
   showItem: boolean = false;
+  showSession: boolean = true;
+  showTransaction: boolean = false;
+  showOrder: boolean = false;
+
+  total: number = 0;
+  summary: number = 0;
+
   selectedItem!: Item;
   newItem: Item = {
       plateNumber: "",
@@ -46,20 +62,26 @@ export class DashboardComponent implements OnInit {
 
   itemIdPicker!: number;
 
-  newSession: Session = {
+  newSession: any = {
       id: 0,
       startTime: '',
       closeTime: '',
-      initiatePrice: 100000,
-      reversePrice: 1000000,
-      stepPrice: 20000,
+      initiatePrice: 0,
+      reversePrice: 0,
+      stepPrice: 0,
       currentPrice: 0,
-      item: this.currentItem
+      item: this.currentItem,
   }
 
   formGroup!: FormGroup;
 
-  constructor(private itemService: ItemService, private sessionService: SessionService, public userService: UserService) {
+  constructor(
+    private itemService: ItemService, 
+    private sessionService: SessionService, 
+    public userService: UserService,
+    private transactionService: TransactionService,
+    private orderService: OrderService
+    ) {
   }
 
 
@@ -90,16 +112,18 @@ export class DashboardComponent implements OnInit {
         ]
     },
     {
-        label: 'Edit',
-        icon: 'pi pi-fw pi-pencil',
+        label: 'Order',
+        icon: 'pi pi-fw pi-money-bill',
         items: [
             {
-                label: 'Left',
-                icon: 'pi pi-fw pi-align-left'
+                label: 'My orders',
+                icon: 'pi pi-fw pi-list',
+                command: () => this.showMyOrder()
             },
             {
-                label: 'Right',
-                icon: 'pi pi-fw pi-align-right'
+                label: 'History',
+                icon: 'pi pi-fw pi-history',
+                command: () => this.showMyTransaction()
             },
             {
                 label: 'Center',
@@ -163,6 +187,11 @@ export class DashboardComponent implements OnInit {
                         icon: 'pi pi-fw pi-calendar-minus'
                     }
                 ]
+            },
+            {
+                label: 'Show',
+                icon: 'pi pi-fw pi-calendar',
+                command: () => this.showRunningSession()
             }
         ]
     },
@@ -188,7 +217,6 @@ export class DashboardComponent implements OnInit {
         itemSelector: new FormControl<Item> (this.selectedItem)
         
     })
-    //console.log(this.selectedItem);
 
     setInterval(()=>{
       this.updateTime()
@@ -208,8 +236,6 @@ export class DashboardComponent implements OnInit {
   }
 
   createItem() {
-    //this.newItem.time = this.currentTime.toDateString();
-    console.log(this.newItem);
     this.itemService.createOne(this.newItem, this.user);
     window.location.reload();
   }
@@ -219,24 +245,70 @@ export class DashboardComponent implements OnInit {
   }
 
   createSession() {
-    var newSession: Session = {
+    var newSession: any = {
         id: 0,
         startTime: this.newSession.startTime,
         closeTime: this.newSession.closeTime,
         initiatePrice: this.newSession.initiatePrice,
         reversePrice: this.newSession.reversePrice,
-        stepPrice: this.newSession.reversePrice,
-        currentPrice: 0,
-        item: this.formGroup.get('itemSelector')?.value
+        stepPrice: this.newSession.stepPrice,
+        currentPrice: this.newSession.initiatePrice,
+        item: this.formGroup.get('itemSelector')?.value,
     }
     this.sessionService.createOne(newSession);
     window.location.reload();
   }
 
+  showRunningSession () {
+    this.showSession = true;
+    this.showItem = false;
+    this.showTransaction = false;
+    this.showOrder = false;
+  }
+
   showMyItem() {
-    const itemContainer = document.getElementById("item-container");
-    if (itemContainer?.style.display==='none') {
-        itemContainer.style.display = '';        
-    }
+    this.showItem = true;
+    this.showSession = false;
+    this.showTransaction = false;
+    this.showOrder = false;
+  }
+
+  showMyOrder() {
+    this.showItem = false;
+    this.showSession = false;
+    this.showTransaction = false;
+    this.showOrder = true;
+
+    // this.orderService.getAllOrderByUserId(this.user.id).subscribe((res: any) => {
+    //     this.orderList = res;
+    //     for (let i of this.orderList) {
+    //         this.total += i.price;
+    //     }
+    // })
+
+
+    this.sessionService.getAllSessionsByWinnerId(this.user.id).subscribe((res: any) => {
+        this.orderList = res;
+        console.log(this.orderList);
+
+    })
+  }
+  showMyTransaction() {
+    this.summary = 0;
+    this.transactionService.getAllTransaction(this.user.id).subscribe((res: any) => {
+        this.transactionList = res;
+        this.transactionList.forEach((i) => {
+            i.created_at = new Date(i.created_at);
+        })
+        for (let i of this.transactionList) {
+            this.summary += i.money;
+        }
+    });
+
+
+    this.showOrder = false;
+    this.showItem = false;
+    this.showSession = false;
+    this.showTransaction = true;
   }
 }

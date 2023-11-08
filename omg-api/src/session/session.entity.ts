@@ -15,20 +15,20 @@ export class Session {
     @Column({type: 'timestamp'})
     closeTime: Timestamp;
 
-    @Column({nullable: true, type: 'bigint'})
+    @Column({nullable: true})
     initiatePrice: number;
 
-    @Column({nullable: true, type: 'bigint'})
+    @Column({nullable: true})
     reversePrice: number;
 
-    @Column({nullable: true, type: 'bigint'})
+    @Column({nullable: true})
     stepPrice: number;
 
-    @Column({type: 'bigint'})
+    @Column()
     currentPrice: number;
     
     @Column({nullable: true})
-    status: number;
+    status: string;
 
     @ManyToOne(() => User, (user) => user.sessionWon) 
     @JoinColumn()

@@ -22,6 +22,8 @@ import { RouterModule } from '@angular/router';
 import { SigninModule } from './user/signin.module';
 import { JWT_OPTIONS, JwtHelperService } from '@auth0/angular-jwt';
 import { TransactionComponent } from './transaction/transaction.component';
+import { TableModule } from 'primeng/table';
+import { OrderComponent } from './order/order.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
 
@@ -32,7 +34,8 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     DashboardComponent,
     SessionComponent,
     UserComponent,
-    TransactionComponent
+    TransactionComponent,
+    OrderComponent
   ],
   imports: [
     BrowserModule,
@@ -52,7 +55,8 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     SigninModule,
     SocketIoModule.forRoot(config),
     SigninModule,
-    SignupModule
+    SignupModule,
+    TableModule
   ],
   providers: [JwtHelperService, {
     provide: JWT_OPTIONS,

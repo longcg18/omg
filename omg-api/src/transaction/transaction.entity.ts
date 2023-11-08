@@ -12,7 +12,7 @@ export class Transaction {
     @Column()
     money: number;
 
-    @Column({type: 'timestamp'})
+    @Column({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     created_at: Timestamp;
 
     @ManyToOne(() => User, (user) => user.transactions)

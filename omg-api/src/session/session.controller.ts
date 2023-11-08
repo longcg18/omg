@@ -16,13 +16,18 @@ export class SessionController {
     return this.sessionsService.findAll();
   }
 
+  @Get('user/:id')
+  findByUserId(@Param('id') id: any) {
+    return this.sessionsService.findByUserId(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.sessionsService.findOne(+id);
   }
 
   @Put()
-  update(@Body() session: Session) {
+  update(@Body() session: any) {
     return this.sessionsService.update(session);
   }
 
