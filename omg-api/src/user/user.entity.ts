@@ -29,6 +29,12 @@ export class User {
     @Column({default: 1})
     role: number; // 0 - admin , 1 - user
 
+    @Column({nullable: true})
+    birthday: Date;
+
+    @Column({nullable: true})
+    phone: string;
+
     @Column({nullable: true, charset: 'utf8', collation: 'utf8_general_ci'})
     address: string;
 

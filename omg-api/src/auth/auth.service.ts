@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -40,8 +41,10 @@ export class AuthService {
       role: user.role,
       name: user.name,
     };
+    var res: User = await this.usersService.findOne(payload.sub);
+    console.log(res);
     return {
-      user,
+      res,
       access_token: this.jwtService.sign(payload),
     };
   }
