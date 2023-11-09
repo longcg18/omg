@@ -24,7 +24,9 @@ export class Item {
     @Column({default: 'Honda'})
     vendor: string;
 
-    //@Column({type: ''})
+    @Column({default: 'avaiable'})
+    status: string;
+
     @Column({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     created_at: Timestamp;
 
