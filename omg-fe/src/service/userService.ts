@@ -28,9 +28,9 @@ export class UserService {
         this.user = this.userSubject.asObservable();
     }
 
-    createOne(user: User) {
-        console.log(user);
-        return this.httpClient.post(saveOne, user).subscribe();
+    createOne(user: User): Observable<User> {
+        //console.log(user);
+        return this.httpClient.post<User>(saveOne, user).pipe();
     }
 
     public get userValue() {
@@ -38,16 +38,6 @@ export class UserService {
     }
 
     login(username: string, password: string) {
-        // return this.httpClient.post<User>(`http://localhost:3000/auth/login`, { username, password })
-        //     .pipe(map(user => {
-        //         // store user details and jwt token in local storage to keep user logged in between page refreshes
-        //         localStorage.setItem('user', JSON.stringify(user));
-        //         this.userSubject.next(user);
-        //         //console.log(this.userSubject);
-        //         //return this.getSigninUser();
-        //         console.log(user);
-        //         return user;
-        //     }));
 
         return this.httpClient.post<User>(`http://localhost:3000/auth/login`, { username, password }).pipe(map((res: any) => {
             //console.log(res);
@@ -71,4 +61,5 @@ export class UserService {
         // const decodedToken = this.jwtService.decodeToken();
         // return decodedToken.user;
     }
+
 }

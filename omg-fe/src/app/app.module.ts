@@ -24,6 +24,12 @@ import { JWT_OPTIONS, JwtHelperService } from '@auth0/angular-jwt';
 import { TransactionComponent } from './transaction/transaction.component';
 import { TableModule } from 'primeng/table';
 import { OrderComponent } from './order/order.component';
+import { MessagesModule } from 'primeng/messages';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { InputTextModule } from 'primeng/inputtext';
+import { CheckboxModule } from 'primeng/checkbox';
+import { RadioButtonModule } from 'primeng/radiobutton';
 
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
 
@@ -56,9 +62,16 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     SocketIoModule.forRoot(config),
     SigninModule,
     SignupModule,
-    TableModule
+    TableModule,
+    //MessagesModule,
+    ToastModule,
+    InputTextModule,
+    CheckboxModule,
+    RadioButtonModule
   ],
-  providers: [JwtHelperService, {
+  providers: [
+    MessageService,
+    JwtHelperService, {
     provide: JWT_OPTIONS,
     useValue: JWT_OPTIONS
   }],
