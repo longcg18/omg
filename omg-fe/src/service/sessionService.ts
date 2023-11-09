@@ -46,6 +46,10 @@ export class SessionService {
         return this.httpClient.get<Session[]>(saveOne).pipe();
     }
 
+    buyReversePrice(session: any): Observable<Session> {
+        return this.httpClient.put<Session>(saveOne, session).pipe();
+    }
+
     autoUpdateSession(): Observable<Session> {
         return this.socket.fromEvent<Session>('updatedPrice').pipe();
     }

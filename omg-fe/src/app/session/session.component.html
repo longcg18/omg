@@ -1,4 +1,4 @@
-<p-card header='{{plateNumber}}' [(ngModel)]="sessionId" name="sessionId" [style]="{ width: '270px' , border: '1px solid black', margin: '10px'}"><ng-template pTemplate="header">
+<p-card header='{{plateNumber}}' [(ngModel)]="sessionId" name="sessionId" [style]="{ width: '300px' , border: '1px solid black', margin: '10px'}"><ng-template pTemplate="header">
     <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png" />
 </ng-template>
 
@@ -24,12 +24,12 @@
     {{this.sessionDuration}}
 
 <ng-template pTemplate="footer">
-    <p-button id="LikeButton" icon="pi pi-thumbs-up" (click)="likeButtonClicked()" [disabled]="buttonDisabled"></p-button>
+    <p-button id="LikeButton" icon="pi pi-angle-double-up" (click)="likeButtonClicked()" [disabled]="likeButtonDisabled"></p-button>
     <p-button id="DisLikeButton" icon="pi pi-thumbs-down" (click)="disLikeButtonClicked()" [disabled]="buttonDisabled"></p-button>
 
     <p-button id="SaveButton" icon="pi pi-save" (click)="saveButtonClicked()" [disabled]="buttonDisabled"></p-button>
     
-    <!--p-button id="CancelButton" icon="pi pi-sync" (click)="cancelButtonClicked()"></p-button-->
+    <p-button id="Buy" icon="pi pi-paypal" (click)="buyButtonClicked()" [disabled]="buttonDisabled"></p-button>
 
 </ng-template>
 </p-card>

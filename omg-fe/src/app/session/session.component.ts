@@ -31,6 +31,7 @@ export class SessionComponent implements OnInit {
   plateNumber!: string;
 
   buttonDisabled: boolean = false;
+  likeButtonDisabled: boolean = true;
 
   closeTime!: Date;
   startTime!: Date;
@@ -67,21 +68,11 @@ export class SessionComponent implements OnInit {
           
       this.status = this.session.status;
 
-      // if (this.closeTime < this.currentTime ) {
-      //   this.orderService.createOne({
-      //     item: this.item,
-      //     price: this.currentPrice,
-      //     user: this.winner
-      //   })
-      // }
-
       if(this.session.winner != null) {
-        //console.log(this.winner);
         this.winnerInfo = this.session.winner.name;
       } else {
         this.winnerInfo = 'Chưa rõ';
       }
-      //console.log(this.session.winner);
     })
 
     //this.updateTime();
@@ -90,13 +81,11 @@ export class SessionComponent implements OnInit {
       this.updateTime();
       //this.updateSession();
     }, 1000);
-
-
-    
   }
 
   likeButtonClicked() {
     this.currentPrice += this.stepPrice;
+    this.likeButtonDisabled = true;
   }
 
   disLikeButtonClicked() {
@@ -108,7 +97,6 @@ export class SessionComponent implements OnInit {
     this.session.winner = <User>this.userService.getSigninUser();
     this.session.status = this.status;
     this.sessionService.saveOne(this.session).subscribe((res:any) => {
-      //console.log(this.session);
       this.currentPrice = res.currentPrice;
       
       this.winner = res.winner;
@@ -133,11 +121,13 @@ export class SessionComponent implements OnInit {
       notify = "Bắt đầu sau: ";
       this.buttonDisabled = true;
       this.status = "upcoming";
+  
 
     } else if (this.currentTime.getTime() > this.startTime.getTime() 
       && this.currentTime.getTime() < this.closeTime.getTime() && 
       this.closeTime.getTime() - this.currentTime.getTime() > 0) {
         notify = "Kết thúc sau: ";
+        this.likeButtonDisabled = false;
         diffTime = this.closeTime.getTime() - this.currentTime.getTime();
         this.status = "opening"
     } else {
@@ -146,7 +136,6 @@ export class SessionComponent implements OnInit {
       this.buttonDisabled = true;
       this.status = "closed"
     }
-
 
     this.sessionService.autoUpdateSession().subscribe((res: any) => {
       this.currentPrice = res.currentPrice;
@@ -164,13 +153,21 @@ export class SessionComponent implements OnInit {
     this.sessionDuration = notify + `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
   }
 
-  // updateSession() {
-  //   this.sessionService.autoUpdateSession().subscribe((res: any) => {
-  //     this.currentPrice = res.currentPrice;
-  //     this.winner = res.winner;
-  //     this.winnerInfo = res.winner.name;
+  buyButtonClicked() {
+    this.buttonDisabled = true;
+    this.likeButtonDisabled = true;
 
-      
-  //   })
-  // }
+    this.session.closeTime = this.currentTime.toISOString();
+    //console.log(this.session.closeTime);
+    this.session.winner = <User>this.userService.getSigninUser();
+    this.session.status = "closed";
+    this.session.currentPrice = this.session.reversePrice;
+    this.currentPrice = this.reversePrice;
+    this.winnerInfo = this.session.winner.name;
+
+    this.sessionService.buyReversePrice(this.session).subscribe((res:any) => {
+      this.winner = res.winner;
+      this.winnerInfo = res.winner.name;
+    });
+  }
 }
