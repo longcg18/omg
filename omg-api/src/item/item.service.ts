@@ -23,12 +23,11 @@ export class ItemService {
 
     async findByOwnerId(userId: number): Promise<Item[]> {
         const itemRes = await this.itemRepo.createQueryBuilder("item")
-        .leftJoin("item.owner", "user")
-        .select(["item", "user.id", "user.username", "user.name"])
-        .where("user.id=:id", {id: userId})
-        .getMany();
-    //console.log(itemRes);
-    return itemRes;
+            .leftJoin("item.owner", "user")
+            .select(["item", "user.id", "user.username", "user.name"])
+            .where("user.id=:id", {id: userId})
+            .getMany();
+        return itemRes;
     }
 
     async findOne(_id): Promise<Item> {
