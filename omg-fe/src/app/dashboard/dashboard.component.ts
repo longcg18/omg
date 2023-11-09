@@ -4,7 +4,7 @@ import { ItemService } from '../../service/itemService';
 import { MenuItem } from 'primeng/api';
 import { Session } from '../session/session';
 import { SessionService } from 'src/service/sessionService';
-import { FormArray, FormBuilder, FormControl, FormGroup, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, NG_VALUE_ACCESSOR, Validators } from '@angular/forms';
 import { UserService } from 'src/service/userService';
 import { User } from '../user/user';
 import { DOCUMENT } from '@angular/common';
@@ -42,9 +42,14 @@ export class DashboardComponent implements OnInit {
   showSession: boolean = true;
   showTransaction: boolean = false;
   showOrder: boolean = false;
+  showProfile: boolean = false;
+  editing: boolean = false;
+  profileSubmitButton: boolean = false;
+  profileEditButton: boolean = false;
 
   total: number = 0;
   summary: number = 0;
+  profileForm!: FormGroup;
 
   selectedItem!: Item;
   newItem: Item = {
@@ -80,7 +85,8 @@ export class DashboardComponent implements OnInit {
     private sessionService: SessionService, 
     public userService: UserService,
     private transactionService: TransactionService,
-    public messageService: MessageService
+    public messageService: MessageService,
+    private formBuilder: FormBuilder
     ) {
   }
 
@@ -144,8 +150,9 @@ export class DashboardComponent implements OnInit {
                 icon: 'pi pi-fw pi-user-plus'
             },
             {
-                label: 'Delete',
-                icon: 'pi pi-fw pi-user-minus'
+                label: 'Edit',
+                icon: 'pi pi-fw pi-pencil',
+                command: () => this.showProfileForm()
             },
             {
                 label: 'Search',
@@ -235,8 +242,35 @@ export class DashboardComponent implements OnInit {
     this.hasShowItemForm = true;
   }
 
+  showProfileForm() {
+
+    this.showOrder = false;
+    this.showItem = false;
+    this.showSession = false;
+    this.showTransaction = false;
+    this.profileEditButton = true;
+    this.profileSubmitButton = false;
+    var dob = new Date(this.user.birthday).getDay()
+
+    this.profileForm = this.formBuilder.group({
+        name: [this.user.name, Validators.required],
+        address: [this.user.address, Validators.required],
+        birthday: [this.user.birthday, Validators.required],
+        phone: [this.user.phone, Validators.required]
+    })
+    this.showProfile = true;
+
+  }
+
   showSessionForm() {
     this.hasShowSessionForm = true;
+  }
+
+  requestEditProfile() {
+    this.editing = true;
+    this.profileSubmitButton = true;
+    this.profileEditButton = false;
+    
   }
 
   createItem() {
@@ -334,6 +368,60 @@ export class DashboardComponent implements OnInit {
         severity: 'info',
         summary: 'Hiển thị lịch sử đặt giá!'
     })
+  }
+
+  onSubmitProfile() {
+    this.editing = true;
+    if (this.f['phone'].value == this.user.phone &&
+    this.f['name'].value == this.user.name &&
+    this.f['birthday'].value == this.user.birthday &&
+    this.f['address'].value == this.user.address) {
+        this.messageService.add({
+            severity: 'error',
+            summary: 'Vui lòng kiểm tra lại!',
+            detail: 'Không có gì thay đổi!'
+        })
+        return;
+    } else {
+        this.user.phone = this.f['phone'].value;
+        this.user.name = this.f['name'].value;
+        this.user.birthday = this.f['birthday'].value;
+        this.user.address = this.f['address'].value;
+
+        this.userService.updateProfile(this.user).subscribe(
+            (res: any) => {
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Cập nhật thành công!',
+                    detail: 'Thông tin của ' + this.f['name'] + ' đã được lưu lại!'
+                });
+                this.editing = false;
+                this.profileEditButton = true;
+                this.profileSubmitButton = false;
+            },
+            (error) => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: error.error.message,
+                    detail: 'Vui lòng kiểm tra lại!'
+                })
+            }
+            
+        )
+    }
+
+
+
+
+  }
+
+  onCancelProfile() {
+    this.showProfile = false;
+    this.editing = false;
+  }
+
+  get f() {
+    return this.profileForm.controls;
   }
 
 }

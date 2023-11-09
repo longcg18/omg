@@ -40,10 +40,10 @@ export class UserService {
     login(username: string, password: string) {
 
         return this.httpClient.post<User>(`http://localhost:3000/auth/login`, { username, password }).pipe(map((res: any) => {
-            //console.log(res);
-            localStorage.setItem('user', JSON.stringify(res.user));
-            this.userSubject.next(res.user);
-            return res.user;
+            console.log(res);
+            localStorage.setItem('user', JSON.stringify(res.res));
+            this.userSubject.next(res.res);
+            return res.res;
         }))
     }
 
@@ -55,11 +55,18 @@ export class UserService {
     }
 
     getSigninUser() {
+
         console.log(this.userSubject.value);
+        //var dob = this.userSubject.value?.birthday.getDay()
+        //this.userSubject.value?.birthday = dob;
         return this.userSubject.value;
         
         // const decodedToken = this.jwtService.decodeToken();
         // return decodedToken.user;
+    }
+
+    updateProfile(user: any): Observable<User> {
+        return this.httpClient.put<User>(saveOne, user).pipe()
     }
 
 }
