@@ -32,7 +32,6 @@ export class DashboardComponent implements OnInit {
   transactionList!: Transaction[];
   orderList!: Session[];
 
-
   currentTime!: Date;
   menuItems!: MenuItem[];
 
@@ -53,8 +52,8 @@ export class DashboardComponent implements OnInit {
       id: 0,
       type: '',
       ownershipNumber: '',
-      vendor: null,
-      status: null
+      vendor: '',
+      status: ''
   };
 
   currentItem!: Item ;
@@ -81,7 +80,6 @@ export class DashboardComponent implements OnInit {
     private sessionService: SessionService, 
     public userService: UserService,
     private transactionService: TransactionService,
-    private orderService: OrderService,
     public messageService: MessageService
     ) {
   }
@@ -270,6 +268,8 @@ export class DashboardComponent implements OnInit {
         item: this.formGroup.get('itemSelector')?.value,
     }
     this.sessionService.createOne(newSession);
+    newSession.item.status = "not_available";
+    this.itemService.saveOne(newSession.item).subscribe();
     window.location.reload();
     this.messageService.add({
         severity: 'success',
@@ -282,7 +282,6 @@ export class DashboardComponent implements OnInit {
     this.showItem = false;
     this.showTransaction = false;
     this.showOrder = false;
-
     this.messageService.add({
         severity: 'info',
         summary: 'Hiển thị các phiên đấu giá!'
@@ -294,7 +293,6 @@ export class DashboardComponent implements OnInit {
     this.showSession = false;
     this.showTransaction = false;
     this.showOrder = false;
-
     this.messageService.add({
         severity: 'success',
         summary: 'Hiển thị các vật phẩm của tôi!'
@@ -306,7 +304,6 @@ export class DashboardComponent implements OnInit {
     this.showSession = false;
     this.showTransaction = false;
     this.showOrder = true;
-
     this.sessionService.getAllSessionsByWinnerId(this.user.id).subscribe((res: any) => {
         this.orderList = res;
         console.log(this.orderList);
@@ -338,4 +335,5 @@ export class DashboardComponent implements OnInit {
         summary: 'Hiển thị lịch sử đặt giá!'
     })
   }
+
 }

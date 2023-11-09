@@ -8,6 +8,7 @@ import { TransactionService } from 'src/service/transactionService';
 import { UserService } from 'src/service/userService';
 import { User } from '../user/user';
 import { OrderService } from 'src/service/orderService';
+import { ItemService } from 'src/service/itemService';
 
 @Component({
   selector: 'app-session',
@@ -52,6 +53,7 @@ export class SessionComponent implements OnInit {
     private sessionService: SessionService,
     private transactionService: TransactionService,
     private userService: UserService,
+    private itemService: ItemService,
     private orderService: OrderService
   ) {}
   ngOnInit(): void {
@@ -60,6 +62,7 @@ export class SessionComponent implements OnInit {
       this.item = this.session.item;
       this.currentPrice = this.session.currentPrice;
       this.closeTime = new Date (this.session.closeTime);
+      
       this.startTime = new Date (this.session.startTime);
       this.plateNumber = this.session.item.plateNumber;
       this.stepPrice = this.session.stepPrice;
@@ -67,7 +70,6 @@ export class SessionComponent implements OnInit {
       this.winner = this.session.winner;
           
       this.status = this.session.status;
-
       if(this.session.winner != null) {
         this.winnerInfo = this.session.winner.name;
       } else {

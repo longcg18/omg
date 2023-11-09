@@ -4,6 +4,6 @@ export interface Item{
     type: string;
     ownershipNumber: string;
 
-    vendor: string | null;
-    status: string | null;
+    vendor: string;
+    status: string;
 }

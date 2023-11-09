@@ -40,13 +40,11 @@ export class ItemService {
     createOne(item: any, user: any) {
         item.ownershipNumber = user.username + item.plateNumber;
         item.owner = user;
-        //console.log(item);
+        item.status = 'available';
         return this.httpClient.post(createOneItem, item).subscribe();
     }
-
 
     getAllItemByUserId(userId: any): Observable<Item[]> {
         return this.httpClient.get<Item[]>(getAllItems + 'owner/' + userId).pipe();
     }
-    
 }
