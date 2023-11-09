@@ -4,12 +4,18 @@ import { SignupComponent } from './signup.component';
 import { RouterModule } from '@angular/router';
 import { SigninComponent } from './signin.component';
 import { CommonModule } from '@angular/common';
+import { ToastModule } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
 @NgModule({
     imports: [
         RouterModule,
+        InputTextModule,
+        ButtonModule,
         FormsModule,    //added here too
         ReactiveFormsModule, //added here too,
-        CommonModule
+        CommonModule,
+        ToastModule
     ],
     declarations: [SigninComponent],
     providers: [],

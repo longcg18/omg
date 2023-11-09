@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -10,11 +10,17 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, pass: string): Promise<any> {
+  async validateUser(username: string, pass: any): Promise<any> {
     console.log('Auth svc validating ...');
     const user = await this.usersService.findByUsername(username);
-    let isPasswordCorrect = true;
-    
+    if (!user) {
+      throw new BadRequestException({ error: 'Tài khoản không tồn tại!'})
+    }
+    let isPasswordCorrect = await this.usersService.validatePassword(username, pass);
+    if (user && !isPasswordCorrect) {
+      throw new BadRequestException({ error: 'Mật khẩu không đúng!' });
+    }
+
     //let isPasswordCorrect = await bcrypt.compare(pass, user.password);
     if (user && isPasswordCorrect) {
       console.log('Validation Ok!');

@@ -12,6 +12,7 @@ import { TransactionService } from 'src/service/transactionService';
 import { Transaction } from '../transaction/transaction';
 import { OrderService } from 'src/service/orderService';
 import { Order } from '../order/order';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-dashboard',
@@ -80,7 +81,8 @@ export class DashboardComponent implements OnInit {
     private sessionService: SessionService, 
     public userService: UserService,
     private transactionService: TransactionService,
-    private orderService: OrderService
+    private orderService: OrderService,
+    public messageService: MessageService
     ) {
   }
 
@@ -203,6 +205,10 @@ export class DashboardComponent implements OnInit {
     ]
 
     this.sessionService.getAllSessions().subscribe((res: any) => {
+        this.messageService.add({
+            severity: 'info',
+            summary: 'Hiển thị các phiên đấu giá!'
+        })
         this.sessionList = res;
     })
 
@@ -238,10 +244,18 @@ export class DashboardComponent implements OnInit {
   createItem() {
     this.itemService.createOne(this.newItem, this.user);
     window.location.reload();
+    this.messageService.add({
+        severity: 'success',
+        summary: 'Tạo vật phẩm mới!'
+    })
   }
 
   logOut() {
     this.userService.logout();
+    this.messageService.add({
+        severity: 'info',
+        summary: 'Đã đăng xuất!'
+    })
   }
 
   createSession() {
@@ -257,6 +271,10 @@ export class DashboardComponent implements OnInit {
     }
     this.sessionService.createOne(newSession);
     window.location.reload();
+    this.messageService.add({
+        severity: 'success',
+        summary: 'Tạo phiên đấu giá mới!'
+    })
   }
 
   showRunningSession () {
@@ -264,6 +282,11 @@ export class DashboardComponent implements OnInit {
     this.showItem = false;
     this.showTransaction = false;
     this.showOrder = false;
+
+    this.messageService.add({
+        severity: 'info',
+        summary: 'Hiển thị các phiên đấu giá!'
+    })
   }
 
   showMyItem() {
@@ -271,6 +294,11 @@ export class DashboardComponent implements OnInit {
     this.showSession = false;
     this.showTransaction = false;
     this.showOrder = false;
+
+    this.messageService.add({
+        severity: 'success',
+        summary: 'Hiển thị các vật phẩm của tôi!'
+    })
   }
 
   showMyOrder() {
@@ -279,18 +307,14 @@ export class DashboardComponent implements OnInit {
     this.showTransaction = false;
     this.showOrder = true;
 
-    // this.orderService.getAllOrderByUserId(this.user.id).subscribe((res: any) => {
-    //     this.orderList = res;
-    //     for (let i of this.orderList) {
-    //         this.total += i.price;
-    //     }
-    // })
-
-
     this.sessionService.getAllSessionsByWinnerId(this.user.id).subscribe((res: any) => {
         this.orderList = res;
         console.log(this.orderList);
 
+    })
+    this.messageService.add({
+        severity: 'info',
+        summary: 'Hiển thị lịch sử thắng đấu giá!'
     })
   }
   showMyTransaction() {
@@ -305,10 +329,13 @@ export class DashboardComponent implements OnInit {
         }
     });
 
-
     this.showOrder = false;
     this.showItem = false;
     this.showSession = false;
     this.showTransaction = true;
+    this.messageService.add({
+        severity: 'info',
+        summary: 'Hiển thị lịch sử đặt giá!'
+    })
   }
 }
