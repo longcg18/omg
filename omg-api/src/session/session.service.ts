@@ -44,6 +44,7 @@ export class SessionService {
     }
   
     async update(session : Session): Promise<UpdateResult> {
+      //console.log("Updating", session)
       return await this.sessionsRepo.update(session.id, session);
     }
   
