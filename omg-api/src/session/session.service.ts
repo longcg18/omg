@@ -52,6 +52,16 @@ export class SessionService {
       return await this.sessionsRepo.delete(id);
     }
 
+    async findHistory(): Promise<Session[]>{
+      const res = await this.sessionsRepo.createQueryBuilder("session")
+        .leftJoin("session.item", "item")
+        .leftJoin("session.winner", "user")
+        .select(["session","item","user"])
+        .where("item.id IS NOT NULL")
+        .andWhere("user.name IS NOT NULL")
+        .getMany();
+      return res;
+    }
 
     async updateSessionInDatabase(_id: number, updatedFields: any): Promise<Session | undefined> {
       console.log(updatedFields);

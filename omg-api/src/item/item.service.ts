@@ -14,7 +14,7 @@ export class ItemService {
     async findAll(): Promise<Item[]> {
         const itemRes = await this.itemRepo.createQueryBuilder("item")
             .leftJoin("item.owner", "user")
-            .select(["item", "user.id", "user.username", "user.name"])
+            .select(["item", "user"])
             .getMany();
         //console.log(itemRes);
         return itemRes;
@@ -31,7 +31,14 @@ export class ItemService {
     }
 
     async findOne(_id): Promise<Item> {
-        return await this.itemRepo.findOneBy({id: _id});
+        const itemRes = await this.itemRepo.createQueryBuilder("item")
+            .leftJoin("item.owner", "user")
+            .select(["item", "user"])
+            .where("item.id=:id", {id: _id})
+            .getOne();
+
+        return itemRes;
+        //return await this.itemRepo.findOneBy({id: _id});
     }
 
     async findByPlateNumber(_plateNumber): Promise<Item> {
