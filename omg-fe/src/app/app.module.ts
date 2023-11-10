@@ -30,6 +30,8 @@ import { ToastModule } from 'primeng/toast';
 import { InputTextModule } from 'primeng/inputtext';
 import { CheckboxModule } from 'primeng/checkbox';
 import { RadioButtonModule } from 'primeng/radiobutton';
+import { InputNumberModule } from 'primeng/inputnumber';
+
 
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
 
@@ -63,7 +65,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     SigninModule,
     SignupModule,
     TableModule,
-    //MessagesModule,
+    InputNumberModule,
     ToastModule,
     InputTextModule,
     CheckboxModule,

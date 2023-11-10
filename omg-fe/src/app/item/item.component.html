@@ -4,14 +4,14 @@
 <p>
     Biển số: {{plateNumber}} <br>
     Hãng xe: {{vendor}} <br>
-    Loại xe: {{type}}
+    Loại xe: {{type}} <br>
+    Chủ sở hữu: {{ownerName}} 
 </p>
 
 <ng-template pTemplate="footer">
     <p-button id="editButton" label="Cập nhật" icon="pi pi-pencil" (click)="editButtonClicked()" [disabled]="editButtonDisabled"></p-button>
     &nbsp;
     <p-button id="editButton" icon="pi pi-play" (click)="startButtonClicked()" [disabled]="startButtonDisabled"></p-button>
-
 </ng-template>
 </p-card>
 

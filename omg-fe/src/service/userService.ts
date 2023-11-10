@@ -37,6 +37,10 @@ export class UserService {
         return this.userSubject.value;
     }
 
+    getOne(userId: any): Observable<User> {
+        return this.httpClient.get<User>(saveOne + userId).pipe();
+    }
+
     login(username: string, password: string) {
 
         return this.httpClient.post<User>(`http://localhost:3000/auth/login`, { username, password }).pipe(map((res: any) => {
@@ -69,4 +73,7 @@ export class UserService {
         return this.httpClient.put<User>(saveOne, user).pipe()
     }
 
+    getAllUser(): Observable<User[]> {
+        return this.httpClient.get<User[]>(saveOne).pipe();
+    }
 }

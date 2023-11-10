@@ -29,7 +29,9 @@ export class ItemComponent implements OnInit{
   editing: boolean = false;
   status!: string;
   startButtonDisabled: boolean = true;
+  ownershipNumber!: string;
 
+  ownerName!: string;
   constructor(
     private itemService: ItemService,
     private formBuilder: FormBuilder,
@@ -38,12 +40,19 @@ export class ItemComponent implements OnInit{
 
   ngOnInit(): void {
     this.itemService.getOne(this.itemId).subscribe((res: any) => {
+
       this.item = res;
       this.plateNumber = this.item.plateNumber;
       this.vendor = this.item.vendor;
       this.type = this.item.type;
       this.status = this.item.status;
-      
+      this.ownershipNumber = this.item.ownershipNumber;
+      if (this.item.owner) {
+        this.ownerName = this.item.owner.name;
+      } else {
+        this.ownerName =  'Chưa rõ'
+      }
+
       if (this.status == 'available') {
         this.editButtonDisabled = false;
         this.startButtonDisabled = false;

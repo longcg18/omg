@@ -1,3 +1,5 @@
+import { User } from "../user/user";
+
 export interface Item{
     id: number | 0;
     plateNumber: string;
@@ -6,4 +8,5 @@ export interface Item{
 
     vendor: string;
     status: string;
+    owner: User;
 }
