@@ -27,6 +27,10 @@ export class ItemService {
         return this.httpClient.get<Item>(getOneItem + id).pipe();
     }
 
+    getAll(): Observable<Item[]> {
+        return this.httpClient.get<Item[]>(getAllItems).pipe();
+    }
+
     saveOne(item: Item): Observable<Item> {
 
         return this.httpClient.put<Item>(saveOne, item).pipe();

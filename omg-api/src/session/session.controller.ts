@@ -21,6 +21,11 @@ export class SessionController {
     return this.sessionsService.findByUserId(id);
   }
 
+  @Get('history')
+  findPerfect() {
+    return this.sessionsService.findHistory();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.sessionsService.findOne(+id);

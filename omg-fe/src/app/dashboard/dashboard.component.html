@@ -1,20 +1,77 @@
-<div class="card">
-  <p-menubar [model]="menuItems">
-      <ng-template pTemplate="start">
-          <img src="https://primefaces.org/cdn/primeng/images/primeng.svg" height="40" class="mr-2" />
+<ng-container *ngIf='role === 0; then adminTemplate else userTemplate'></ng-container>
 
-      </ng-template>
-      <ng-template pTemplate="end">
-        <div class="timer">
-            Đồng hồ: {{this.currentTime | date: 'HH:mm:ss'}} GMT+7 <br>
-            Xin chào {{user.name}}
 
+<ng-template #userTemplate>
+  <div class="card">
+    <p-menubar [model]="menuItems">
+        <ng-template pTemplate="start">
+            <img src="https://primefaces.org/cdn/primeng/images/primeng.svg" height="40" class="mr-2" />
+  
+        </ng-template>
+        <ng-template pTemplate="end">
+          <div class="timer">
+              Đồng hồ: {{this.currentTime | date: 'HH:mm:ss'}} GMT+7 <br>
+              Xin chào người dùng {{user.name}}
+  
+          </div>
+          
+            <!--input type="text" pInputText placeholder="Search" class="w-full" /-->
+        </ng-template>
+       
+    </p-menubar>
+  </div>
+
+</ng-template>
+
+<ng-template  #adminTemplate>
+  <div class="card">
+    <p-menubar [model]="adminMenuItems">
+        <ng-template pTemplate="start">
+            <img src="https://primefaces.org/cdn/primeng/images/primeng.svg" height="40" class="mr-2" />
+  
+        </ng-template>
+        <ng-template pTemplate="end">
+          <div class="timer">
+              Đồng hồ: {{this.currentTime | date: 'HH:mm:ss'}} GMT+7 <br>
+              Xin chào quản trị viên {{user.name}}
+  
+          </div>
+          
+            <!--input type="text" pInputText placeholder="Search" class="w-full" /-->
+        </ng-template>
+       
+    </p-menubar>
+  </div>
+
+</ng-template>
+
+<div class="new-user" *ngIf="showNewUserForm">
+  <h3 class="form-title">Tạo người dùng mới</h3>
+    <form [formGroup]="newUserForm" class="card flex justify-content-center" id="register-form">
+        <div class="flex flex-column gap-2">
+            <label htmlFor="username">Tên người dùng</label> <br>
+            <input type="text" pInputText name="username" id="username" placeholder="ricky4" formControlName="username"/> 
+            <p></p>
         </div>
-        
-          <!--input type="text" pInputText placeholder="Search" class="w-full" /-->
-      </ng-template>
-     
-  </p-menubar>
+        <div class="form-group">
+            <label htmlFor="name">Họ và tên</label> <br>
+            <input type="text" pInputText name="name" id="name" placeholder="Trần Văn D" formControlName="name"/>
+            <p></p>
+        </div>
+        <div class="form-group">
+            <label htmlFor="email">Email</label> <br>
+            <input type="text" pInputText name="email" id="email" placeholder="ricky4@gmail.com" formControlName="email"/>
+            <p></p>
+        </div>
+        <div class="form-group">
+            <label htmlFor="password">Mật khẩu</label> <br>
+            <input type="password" pInputText name="pass" id="pass" placeholder="Bí mật" formControlName="password"/>
+            <p></p>
+        </div>
+        <p></p>
+        <p-button label="Xác nhận" (click)="onSubmitCreateUser()"></p-button>
+        <p-button label="Huỷ" (click)="onCancelCreateUser()"></p-button>
+    </form>
 </div>
 
 <div class="edit-item" *ngIf="showProfile">
@@ -51,28 +108,31 @@
 <div *ngIf="hasShowItemForm" class="card-like">
   <form>
     <p>
-      Biển số <input type="text" placeholder="00A0-00000" [(ngModel)]="newItem.plateNumber" name="plateNumber">
+      Biển số <input type="text" pInputText placeholder="00A0-00000" [(ngModel)]="newItem.plateNumber" name="plateNumber">
     </p>
     <p>
-      Nhãn hiệu <input type="text" placeholder="Honda Wave Alpha" [(ngModel)]="newItem.vendor" name="vendor">
+      Nhãn hiệu <input type="text" pInputText placeholder="Honda Wave Alpha" [(ngModel)]="newItem.vendor" name="vendor">
     </p>
     <p>
-      Loại phương tiện <input type="text" placeholder="Xe máy" [(ngModel)]="newItem.type" name="vendor">
+      Loại phương tiện <input type="text" pInputText placeholder="Xe máy" [(ngModel)]="newItem.type" name="vendor">
     </p>
-    <button type="submit" (click)="createItem()">Submit</button>
+    <p-button type="submit" (click)="createItem()">Xác nhận</p-button>
+    &nbsp;
+    <p-button type="submit" (click)="cancelCreateItem()">Huỷ</p-button>
+
   </form>
 </div>
 
 <div *ngIf="hasShowSessionForm" class="card-like">
   <form>
     <p>
-     Giá mua thẳng <input type="number" placeholder="Giá mua thẳng" [(ngModel)]="newSession.reversePrice" name="reversePrice"> triệu
+     Giá mua thẳng <input type="number" pInputNumber placeholder="Giá mua thẳng" [(ngModel)]="newSession.reversePrice" name="reversePrice"> triệu
     </p>
     <p>
-     Giá khởi điểm <input type="number" placeholder="Giá khởi điểm" [(ngModel)]="newSession.initiatePrice" name="initPrice"> triệu
+     Giá khởi điểm <input type="number" pInputNumber placeholder="Giá khởi điểm" [(ngModel)]="newSession.initiatePrice" name="initPrice"> triệu
     </p>
     <p>
-     Bước nhảy giá <input type="number" placeholder="Bước nhảy giá" [(ngModel)]="newSession.stepPrice" name="stepPrice"> triệu
+     Bước nhảy giá <input type="number" pInputNumber placeholder="Bước nhảy giá" [(ngModel)]="newSession.stepPrice" name="stepPrice"> triệu
     </p>
     <p>
      Thời điểm bắt đầu <p-calendar [(ngModel)]="newSession.startTime" name="StartTimePicker" [showTime]="true" [showSeconds]="true"></p-calendar>
@@ -90,8 +150,16 @@
       </p-dropdown>
   </form>
   
-    <button type="submit" (click)="createSession()">Submit</button>
+    <p-button type="submit" (click)="createSession()">Xác nhận</p-button>
+    <p-button type="submit" (click)="cancelCreateSession()">Huỷ</p-button>
+
   </form>
+</div>
+<div class="user-container" *ngIf="showUsers">
+  <div *ngFor="let user of userList; let i = index">
+    <app-user class="user" [userId]="user.id"></app-user>
+    <div *ngIf="i%4===3 || i=== userList.length - 1" class="clearfix"></div>
+  </div>
 </div>
 
 <div class="session-container" *ngIf="showSession">
@@ -153,6 +221,32 @@
     <ng-template pTemplate="summery"> Tổng số tiền đã đặt: {{total}} </ng-template>
 </p-table>
 </div>
+
+<div class="card" *ngIf="showSystemOrder">
+  <p-table [value]="systemOrderList" styleClass="p-datatable-gridlines" [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template pTemplate="caption"> Toàn bộ đơn hàng </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Id</th>
+            <th>Số tiền</th>
+            <th>Biển số</th>
+            <th>Trạng thái</th>
+            <th>Người thắng</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-order>
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.currentPrice }}</td>
+            <td>{{ order.item.plateNumber! }}</td>
+            <td>{{ order.status }}</td>
+            <td>{{ order.winner.name!}}</td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="summery"> Tổng số tiền đã đặt: {{total}} </ng-template>
+</p-table>
+</div>
+
 <router-outlet></router-outlet>
 
   

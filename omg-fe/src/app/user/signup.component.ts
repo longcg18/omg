@@ -37,7 +37,7 @@ export class SignupComponent implements OnInit {
     }
 
     onSubmit() {
-        console.log(this.f['username'].value);
+        //console.log(this.f['username'].value);
         if (this.f['username'].value == '') {
             this.messageService.add({
                 severity: 'error',

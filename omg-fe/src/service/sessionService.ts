@@ -46,6 +46,10 @@ export class SessionService {
         return this.httpClient.get<Session[]>(saveOne).pipe();
     }
 
+    getOrder(): Observable<Session[]> {
+        return this.httpClient.get<Session[]>(saveOne + 'history').pipe();
+    }
+
     buyReversePrice(session: any): Observable<Session> {
         return this.httpClient.put<Session>(saveOne, session).pipe();
     }
