@@ -34,6 +34,8 @@ export class DashboardComponent implements OnInit {
     systemOrderList!: Session[];
     userList!: User[];
 
+    filteredSessionList: Session[] = [];
+
     currentTime!: Date;
 
 
@@ -45,6 +47,7 @@ export class DashboardComponent implements OnInit {
     hasShowItemForm: boolean = false;
     hasShowSessionForm: boolean = false;
 
+    showFilter: boolean = false;
     showNewUserForm: boolean = false;
     showUsers: boolean = false;
     showItem: boolean = false;
@@ -322,7 +325,7 @@ export class DashboardComponent implements OnInit {
         this.showItem = false;
         this.showSession = false;
         this.showTransaction = false;
-        this.profileEditButton = false;
+        this.profileEditButton = true;
         this.profileSubmitButton = false;
         this.showSystemOrder = false;
         this.showUsers = false;
@@ -354,7 +357,7 @@ export class DashboardComponent implements OnInit {
         this.profileEditButton = false;
         this.showSystemOrder = false;
         this.showUsers = false;
-        this.showProfile = false;
+        this.showProfile = true;
         this.showOrder = false;
 
     }
@@ -404,7 +407,18 @@ export class DashboardComponent implements OnInit {
     cancelCreateItem() {
         this.hasShowItemForm = false;
     }
+
+    filterResults(text: string) {
+        if (!text) {
+            this.filteredSessionList = this.sessionList;
+        } 
+        this.filteredSessionList = this.sessionList.filter(
+            session => session.item.plateNumber.toLowerCase().includes(text.toLowerCase())
+        );
+    }
     showRunningSession () {
+        this.showFilter = true; 
+
         this.showSystemOrder = false;
         this.showUsers = false;
         this.showProfile = false;
@@ -415,6 +429,7 @@ export class DashboardComponent implements OnInit {
 
         this.sessionService.getAllSessions().subscribe((res: any) => {
             this.sessionList = res;
+            this.filteredSessionList = this.sessionList;
         })
 
         this.messageService.add({
@@ -528,7 +543,7 @@ export class DashboardComponent implements OnInit {
                     this.messageService.add({
                         severity: 'success',
                         summary: 'Cập nhật thành công!',
-                        detail: 'Thông tin của ' + this.f['name'] + ' đã được lưu lại!'
+                        detail: 'Thông tin của ' + this.f['name'].value + ' đã được lưu lại!'
                     });
                     this.editing = false;
                     this.profileEditButton = true;
