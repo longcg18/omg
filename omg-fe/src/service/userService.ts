@@ -59,14 +59,8 @@ export class UserService {
     }
 
     getSigninUser() {
-
-        console.log(this.userSubject.value);
-        //var dob = this.userSubject.value?.birthday.getDay()
-        //this.userSubject.value?.birthday = dob;
+        //console.log(this.userSubject.value);
         return this.userSubject.value;
-        
-        // const decodedToken = this.jwtService.decodeToken();
-        // return decodedToken.user;
     }
 
     updateProfile(user: any): Observable<User> {
