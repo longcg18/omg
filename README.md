@@ -1,5 +1,5 @@
 # OMG
- Our task is to build an license plate auction system
+ Our task is to build a license plate auction system
 
 ### 1. About the framework used 
 
