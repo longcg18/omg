@@ -17,7 +17,6 @@
 - node v18.16.0
 - npm v9.5.1
 - MySQL v8.0
-- Generate Data by run all SQL scripts in `api/dataGenerate`
 
 #### 2.1 BackEnd 
 - Please re-configure your `src/app.module.ts` with your Database setting,  
