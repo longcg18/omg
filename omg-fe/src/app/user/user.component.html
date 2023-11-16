@@ -1,50 +1,56 @@
-<p-card header="Người dùng {{username}}" [style]="{ width: '70%' , border: '1px solid black', margin: '10px'}">
-    <ng-template pTemplate="header"></ng-template>
-    <div class="body" style="display: flex; align-items: center;">
-        <div>        
-            <img src="https://haycafe.vn/wp-content/uploads/2022/02/Avatar-trang-den.png" style="height: 100px; width: 100px;">
+<div    >
+    <p-card class="justify-content-center" header="Người dùng #{{username}}" [style]="{ width: '99%' , border: '1px solid gray', margin: '10px'}">
+        <ng-template pTemplate="header"></ng-template>
+        <div class="body" style="display: flex; align-items: center;">
+            <div>        
+                <img src="https://haycafe.vn/wp-content/uploads/2022/02/Avatar-trang-den.png" style="height: 80px; width: 80px;">
+            </div>
+            <div style="margin-left: 20px;">
+                <b>Tên người dùng:</b> {{username}} &nbsp;&nbsp;&nbsp;&nbsp; <b>Họ và tên:</b> {{name}} &nbsp;&nbsp;&nbsp;&nbsp; <b>Email:</b> {{email}} <br> <br> <br>
+                <b>Địa chỉ:</b> {{address}} &nbsp;&nbsp;&nbsp;&nbsp; <b>Sinh nhật:</b> {{birthdayDisplay}} &nbsp;&nbsp;&nbsp;&nbsp; <b>Số điện thoại:</b> {{phone}}
+            </div>   
         </div>
-        <div style="margin-left: 20px;">
-            <b>Tên người dùng:</b> {{username}} &nbsp; <b>Họ và tên:</b> {{name}}  <br> <br>
-            <b>Email:</b> {{email}} &nbsp; <b>Địa chỉ:</b> {{address}} <br> <br>
-            <b>Sinh nhật:</b> {{birthdayDisplay}} &nbsp; <b>Số điện thoại:</b> {{phone}} <br> <br>
-        </div>
-            
-    </div>
+    
+        <ng-template pTemplate="footer" class="justify-content-center">
+            <p-button id="editButton" label="Cập nhật" icon="pi pi-pencil" (click)="editButtonClicked()" [disabled]="editButtonDisabled"></p-button>
+            &nbsp;
+            <p-button id="editButton" icon="pi pi-play" (click)="startButtonClicked()" [disabled]="startButtonDisabled"></p-button>
+        </ng-template>
+    </p-card>
+<div class="flex align-content-center flex-wrap" *ngIf="editing">
+    <p-dialog header="Chỉnh sửa thông tin cá nhân" [visible]="true" [modal]="true" [style]="{width: '50vw'}">
+        <form [formGroup]="form" class="" id="item-editor-form">
+            <div class="form-group block">
+                <label htmlFor="name">Tên người dùng</label> <br>
+                <input type="text" class="w-full mb-3" pInputText readonly name="username" id="username" formControlName="username"/> <br>
+            </div>
+            <div class="form-group block">
+                <label htmlFor="name">Họ và tên</label> <br>
+                <input type="text" class="w-full mb-3" *ngIf="editing" pInputText name="name" id="name" formControlName="name"/> <br>
+            </div>
+            <div class="form-group block">
+                <label htmlFor="name">Email</label> <br>
+                <input type="text" class="w-full mb-3" readonly pInputText name="email" id="email" formControlName="email"/> <br>
+            </div>
+            <div class="form-group block">
+                <label htmlFor="address">Địa chỉ</label><br>
+                <input type="text" class="w-full mb-3" *ngIf="editing" pInputText name="address" id="address" formControlName="address"/> <br>
+            </div>
 
-    <ng-template pTemplate="footer">
-        <p-button id="editButton" label="Cập nhật" icon="pi pi-pencil" (click)="editButtonClicked()" [disabled]="editButtonDisabled"></p-button>
-        &nbsp;
-        <p-button id="editButton" icon="pi pi-play" (click)="startButtonClicked()" [disabled]="startButtonDisabled"></p-button>
-    </ng-template>
-</p-card>
-
-<div class="edit-user" *ngIf="editing" style="margin-left: 5%;">
-    <h3 class="form-title">Chỉnh sửa thông tin người dùng</h3>
-    <form [formGroup]="form" class="card flex justify-content-center" id="item-editor-form">
-        <div class="flex flex-column gap-2">
-            <label htmlFor="name">Họ và tên</label><br>
-            <input type="text" *ngIf="editing" pInputText name="name" id="name" formControlName="name"/> 
-            <p></p>
+            <div class="form-group block">
+            <label htmlFor="phone">Số điện thoại</label><br>
+            <input type="text" class="w-full mb-3" *ngIf="editing" pInputText name="phone" id="phone" formControlName="phone"/> <br>
+            <div class="form-group block">
+                <label htmlFor="type">Sinh nhật</label><br>
+                <p-calendar class="w-full mb-3" *ngIf="editing" formControlName="birthday"></p-calendar> <br> <br>
+            </div>
         </div>
-        <div class="form-group">
-            <label htmlFor="address">Địa chỉ</label><br>
-            <input type="text" *ngIf="editing" pInputText name="address" id="address" formControlName="address"/>
-            <p></p>
-        </div>
-        <div class="form-group">
-            <label htmlFor="type">Sinh nhật</label> <br>
-            <p-calendar *ngIf="editing" formControlName="birthday"></p-calendar>
-            <p></p>
-        </div>
-        <div class="form-group">
-          <label htmlFor="phone">Số điện thoại</label> <br>
-          <input type="text" *ngIf="editing" pInputText name="phone" id="phone" formControlName="phone"/>
-          <p></p>
-      </div>
-        <p-button label="Xác nhận" (click)="onSubmitProfile()"></p-button> 
-        &nbsp;
-        <p-button label="Huỷ" (click)="onCancelProfile()"></p-button>
-    </form>
+            <p-button label="Xác nhận" (click)="onSubmitProfile()"></p-button> 
+            &nbsp;
+            <p-button label="Huỷ" (click)="onCancelProfile()"></p-button>
+        </form>
+    </p-dialog>
+        
+</div>
 
 </div>

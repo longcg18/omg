@@ -285,6 +285,7 @@ export class DashboardComponent implements OnInit {
     }
 
     manageUser() {
+        this.showFilter = false;
         this.showUsers = true;
         this.showOrder = false;
         this.showItem = false;
@@ -305,6 +306,7 @@ export class DashboardComponent implements OnInit {
     }
 
     showItemForm() {
+        this.showFilter = false;
         this.showUsers = false;
         this.showOrder = false;
         this.showItem = false;
@@ -320,7 +322,7 @@ export class DashboardComponent implements OnInit {
     }
 
     showProfileForm() {
-
+        this.showFilter = false;
         this.showOrder = false;
         this.showItem = false;
         this.showSession = false;
@@ -343,6 +345,7 @@ export class DashboardComponent implements OnInit {
     }
 
     showSessionForm() {
+        this.showFilter = false;
         this.showSystemOrder = false;
         this.hasShowSessionForm = true;
         this.showUsers = false;
@@ -352,6 +355,7 @@ export class DashboardComponent implements OnInit {
     }
 
     requestEditProfile() {
+        this.showFilter = false;
         this.editing = true;
         this.profileSubmitButton = true;
         this.profileEditButton = false;
@@ -363,6 +367,32 @@ export class DashboardComponent implements OnInit {
     }
 
     createItem() {
+        if (this.newItem.plateNumber == '') {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Vui lòng kiểm tra lại!',
+              detail: 'Biển số xe không được để trống!'
+            })
+            return;
+          }
+      
+          if (this.newItem.vendor == '') {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Vui lòng kiểm tra lại!',
+              detail: 'Nhãn hiệu không được để trống!'
+            })
+            return;
+          }
+      
+          if (this.newItem.type == '') {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Vui lòng kiểm tra lại!',
+              detail: 'Loại xe không được để trống!'
+            })
+            return;
+          }
         this.itemService.createOne(this.newItem, this.user);
         window.location.reload();
         this.messageService.add({
@@ -380,6 +410,7 @@ export class DashboardComponent implements OnInit {
     }
 
     createSession() {
+        this.showFilter = false;
         var newSession: any = {
             id: 0,
             startTime: this.newSession.startTime,
@@ -439,6 +470,8 @@ export class DashboardComponent implements OnInit {
     }
 
     showMyItem() {
+        this.showFilter = false; 
+
         this.showSystemOrder = false;
         this.showUsers = false;
         this.showProfile = false;
@@ -461,6 +494,8 @@ export class DashboardComponent implements OnInit {
     }
 
     showMyOrder() {
+        this.showFilter = false; 
+
         this.showItem = false;
         this.showSession = false;
         this.showUsers = false;
@@ -479,6 +514,8 @@ export class DashboardComponent implements OnInit {
     }
 
     showSystemOrders () {
+        this.showFilter = false; 
+
         this.showItem = false;
         this.showSession = false;
         this.showTransaction = false;
@@ -497,6 +534,8 @@ export class DashboardComponent implements OnInit {
         })
     }
     showMyTransaction() {
+        this.showFilter = false; 
+
         this.summary = 0;
         this.transactionService.getAllTransaction(this.user.id).subscribe((res: any) => {
             this.transactionList = res;
@@ -521,6 +560,8 @@ export class DashboardComponent implements OnInit {
     }
 
     onSubmitProfile() {
+        this.showFilter = false; 
+
         this.editing = true;
         if (this.f['phone'].value == this.user.phone &&
         this.f['name'].value == this.user.name &&
@@ -577,6 +618,8 @@ export class DashboardComponent implements OnInit {
     }
 
     createNewUser() {
+        this.showFilter = false; 
+
         this.showNewUserForm = true;
         this.showItem = false;
         this.showSession = false;

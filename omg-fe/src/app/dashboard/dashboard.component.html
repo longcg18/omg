@@ -153,12 +153,16 @@
 
   </form>
 </div>
-<div class="user-container" *ngIf="showUsers">
-  <div *ngFor="let user of userList; let i = index">
-    <app-user class="user" [userId]="user.id"></app-user>
-    <!--div *ngIf="i%4===3 || i=== userList.length - 1" class="clearfix"></div-->
+<div class="" *ngIf="showUsers">
+  <div class="justify-content-center">
+    <div class="user-container ">
+      <div *ngFor="let user of userList; let i = index">
+        <app-user class="user" [userId]="user.id"></app-user>
+      </div>
+    </div>
   </div>
 </div>
+
 
 <div *ngIf="showFilter" style="margin-top: 1%;">
   <input type="text" pInputText placeholder="Tìm kiếm theo biển số" #filter>

@@ -32,6 +32,9 @@ export class User {
     @Column({nullable: true})
     birthday: Date;
 
+    @Column({nullable: true, default: 0}) // 0 - male, 1 - female, other - others
+    gender: number;
+
     @Column({nullable: true})
     phone: string;
 
