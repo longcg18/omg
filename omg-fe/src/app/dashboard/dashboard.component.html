@@ -5,7 +5,7 @@
   <div class="card">
     <p-menubar [model]="menuItems">
         <ng-template pTemplate="start">
-            <img src="https://primefaces.org/cdn/primeng/images/primeng.svg" height="40" class="mr-2" />
+            <img src="assets/logo.png" height="40" class="mr-2" />
   
         </ng-template>
         <ng-template pTemplate="end">
@@ -24,7 +24,7 @@
   <div class="card">
     <p-menubar [model]="adminMenuItems">
         <ng-template pTemplate="start">
-            <img src="https://primefaces.org/cdn/primeng/images/primeng.svg" height="40" class="mr-2" />
+            <img src="assets/logo.png" height="40" class="mr-2" />
   
         </ng-template>
         <ng-template pTemplate="end">
@@ -72,36 +72,7 @@
     </form>
 </div>
 
-<div class="edit-item" *ngIf="showProfile">
-  <h3 class="form-title">Chỉnh sửa thông tin cá nhân</h3>
-  <form [formGroup]="profileForm" class="card flex justify-content-center" id="item-editor-form">
-      <div class="flex flex-column gap-2">
-          <label htmlFor="name">Họ và tên</label> {{this.user.name}} <br>
-          <input type="text" *ngIf="editing" pInputText name="name" id="name" formControlName="name"/> 
-          <p></p>
-      </div>
-      <div class="form-group">
-          <label htmlFor="address">Địa chỉ</label> {{this.user.address}}<br>
-          <input type="text" *ngIf="editing" pInputText name="address" id="address" formControlName="address"/>
-          <p></p>
-      </div>
-      <div class="form-group">
-          <label htmlFor="type">Sinh nhật</label> {{this.user.birthday}} <br>
-          <p-calendar *ngIf="editing" formControlName="birthday"></p-calendar>
-          <!--input type="text" pInputText name="type" id="type" formControlName="type"/-->
-          <p></p>
-      </div>
-      <div class="form-group">
-        <label htmlFor="phone">Số điện thoại</label> {{this.user.phone}} <br>
-        <input type="text" *ngIf="editing" pInputText name="phone" id="phone" formControlName="phone"/>
-        <p></p>
-    </div>
-      <p-button label="Xác nhận" *ngIf="profileSubmitButton" (click)="onSubmitProfile()"></p-button>
-      <p-button label="Chỉnh sửa" *ngIf="profileEditButton" (click)="requestEditProfile()"></p-button>
-      <p-button label="Huỷ" (click)="onCancelProfile()"></p-button>
-  </form>
 
-</div>
 
 <div *ngIf="hasShowItemForm" class="card-like">
   <form>
@@ -163,9 +134,13 @@
   </div>
 </div>
 
+<div class="edit-item" *ngIf="showProfile">
+  <app-user class="user" [userId]="this.user.id"></app-user>
+</div>
+
 
 <div *ngIf="showFilter" style="margin-top: 1%;">
-  <input type="text" pInputText placeholder="Tìm kiếm theo biển số" #filter>
+  <input type="text" style="margin-left: 1%;" pInputText placeholder="Tìm kiếm theo biển số" #filter>
   <p-button class="primary" type="button" (click)="filterResults(filter.value)">Search</p-button>
   <div class="session-container" *ngIf="showSession">
     <div *ngFor="let session of filteredSessionList; let i = index">
