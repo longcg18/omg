@@ -22,7 +22,7 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets",
+              "src/assets/otoHome.webp",
               "src/assets/images"
             ],
             "styles": [
@@ -86,7 +86,8 @@
             "tsConfig": "tsconfig.spec.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/assets/otoHome.webp"
             ],
             "styles": [
               "src/styles.css",

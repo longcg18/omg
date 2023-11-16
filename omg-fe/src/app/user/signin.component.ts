@@ -66,8 +66,9 @@ export class SigninComponent implements OnInit {
             .subscribe(
                 () => {
                     // get return url from query parameters or default to home page
-                    const returnUrl = this.route.snapshot.queryParams['home'] || '/';
-                    this.router.navigateByUrl(returnUrl);
+                    // const returnUrl = this.route.snapshot.queryParams['home'];
+                    // this.router.navigateByUrl(returnUrl);
+                    this.router.navigateByUrl('dashboard')
                 },
                 (error) => {
                     // Xử lý khi có lỗi trong quá trình đăng nhập

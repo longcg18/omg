@@ -4,10 +4,12 @@ import { UserComponent } from './user/user.component';
 import { SignupComponent } from './user/signup.component';
 import { SigninComponent } from './user/signin.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { AppComponent } from './app.component';
+import { HomePageComponent } from './home-page/home-page.component';
 
 const routes: Routes = [
   {
-    path: '', component: DashboardComponent
+    path: '', component: HomePageComponent
   },
   {
     path: 'signup', component: SignupComponent
@@ -16,7 +18,7 @@ const routes: Routes = [
     path: 'signin', component: SigninComponent
   },
   {
-    path: 'home', component: DashboardComponent
+    path: 'dashboard', component: DashboardComponent
   }
 ];
 

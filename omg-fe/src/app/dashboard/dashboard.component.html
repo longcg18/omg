@@ -156,7 +156,7 @@
 <div class="user-container" *ngIf="showUsers">
   <div *ngFor="let user of userList; let i = index">
     <app-user class="user" [userId]="user.id"></app-user>
-    <div *ngIf="i%4===3 || i=== userList.length - 1" class="clearfix"></div>
+    <!--div *ngIf="i%4===3 || i=== userList.length - 1" class="clearfix"></div-->
   </div>
 </div>
 

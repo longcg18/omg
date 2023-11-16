@@ -31,6 +31,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { CheckboxModule } from 'primeng/checkbox';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { HomePageComponent } from './home-page/home-page.component';
 
 
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
@@ -43,7 +44,8 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     SessionComponent,
     UserComponent,
     TransactionComponent,
-    OrderComponent
+    OrderComponent,
+    HomePageComponent
   ],
   imports: [
     BrowserModule,
