@@ -23,7 +23,8 @@
             "assets": [
               "src/favicon.ico",
               "src/assets/otoHome.webp",
-              "src/assets/images"
+              "src/assets/images",
+              "src/assets/logo.png"
             ],
             "styles": [
               "src/styles.css",
@@ -87,7 +88,8 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/assets/otoHome.webp"
+              "src/assets/otoHome.webp",
+              "src/assets/logo.png"
             ],
             "styles": [
               "src/styles.css",
