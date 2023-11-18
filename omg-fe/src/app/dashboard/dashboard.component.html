@@ -43,7 +43,7 @@
 </ng-template>
 
 
-<div class="new-user" *ngIf="showNewUserForm">
+<div class="new-user" *ngIf="currentDashboard==='createUser'">
   <h3 class="form-title">Tạo người dùng mới</h3>
     <form [formGroup]="newUserForm" class="card flex justify-content-center" id="register-form">
         <div class="flex flex-column gap-2">
@@ -74,7 +74,7 @@
 
 
 
-<div *ngIf="hasShowItemForm" class="card-like">
+<div *ngIf="currentDashboard==='createItem'" class="card-like">
   <form>
     <p>
       Biển số <input type="text" pInputText placeholder="00A0-00000" [(ngModel)]="newItem.plateNumber" name="plateNumber">
@@ -85,6 +85,24 @@
     <p>
       Loại phương tiện <input type="text" pInputText placeholder="Xe máy" [(ngModel)]="newItem.type" name="vendor">
     </p>
+
+    <!--p-fileUpload type="file" mode="basic" chooseLabel="Chọn ảnh" name="image" (change)="imageOnSelect($event)" (onUpload)="imageOnUpload($event)" accept="image/*"></p-fileUpload-->
+        
+    <div *ngIf="previewUrl" class="image-preview">
+      <img [src]="previewUrl" alt="Preview">
+    </div>
+    
+    <div class="custom-file">
+      <input type="file" id="image" (change)="onChangeFile($event)" name="image" class="custom-file-input">
+      <label for="image" class="custom-file-label">Chọn ảnh</label>
+    </div>
+
+    
+    
+
+    <br>
+    
+
     <p-button type="submit" (click)="createItem()">Xác nhận</p-button>
     &nbsp;
     <p-button type="submit" (click)="cancelCreateItem()">Huỷ</p-button>
@@ -92,7 +110,7 @@
   </form>
 </div>
 
-<div *ngIf="hasShowSessionForm" class="card-like">
+<div *ngIf="currentDashboard==='createSession'" class="card-like">
   <form>
     <p>
      Giá mua thẳng <input type="number" pInputNumber placeholder="Giá mua thẳng" [(ngModel)]="newSession.reversePrice" name="reversePrice"> triệu
@@ -124,7 +142,7 @@
 
   </form>
 </div>
-<div class="" *ngIf="showUsers">
+<div class="" *ngIf="currentDashboard==='userManagement'">
   <div class="justify-content-center">
     <div class="user-container ">
       <div *ngFor="let user of userList; let i = index">
@@ -134,15 +152,15 @@
   </div>
 </div>
 
-<div class="edit-item" *ngIf="showProfile">
+<div class="view-profile" *ngIf="currentDashboard==='myProfile'">
   <app-user class="user" [userId]="this.user.id"></app-user>
 </div>
 
 
-<div *ngIf="showFilter" style="margin-top: 1%;">
+<div *ngIf="currentDashboard==='runningSession'" style="margin-top: 1%;">
   <input type="text" style="margin-left: 1%;" pInputText placeholder="Tìm kiếm theo biển số" #filter>
   <p-button class="primary" type="button" (click)="filterResults(filter.value)">Search</p-button>
-  <div class="session-container" *ngIf="showSession">
+  <div class="session-container">
     <div *ngFor="let session of filteredSessionList; let i = index">
         <app-session class="session" [sessionId]="session.id" ngDefaultControl="true"></app-session>
         <div *ngIf="i%4 === 3 || i === filteredSessionList.length - 1" class="clearfix"></div>
@@ -151,14 +169,14 @@
 </div>
 
 
-<div class="item-container" *ngIf="showItem" id="item-container">
+<div class="item-container" *ngIf="currentDashboard==='myItems'" id="item-container">
   <div *ngFor="let item of itemList; let i = index">
     <app-item class="item" [itemId]="item.id"></app-item>
     <div *ngIf="i%4 === 3 || i === itemList.length - 1" class="clearfix"></div>
   </div>
 </div>
 
-<div class="card" *ngIf="showTransaction">
+<div class="card" *ngIf="currentDashboard==='myTransactions'">
   <p-table [value]="transactionList" styleClass="p-datatable-gridlines" [tableStyle]="{ 'min-width': '50rem' }">
     <ng-template pTemplate="caption"> Lịch sử giao dịch </ng-template>
     <ng-template pTemplate="header">
@@ -181,7 +199,7 @@
 </p-table>
 </div>
 
-<div class="card" *ngIf="showOrder">
+<div class="card" *ngIf="currentDashboard==='myOrders'">
   <p-table [value]="orderList" styleClass="p-datatable-gridlines" [tableStyle]="{ 'min-width': '50rem' }">
     <ng-template pTemplate="caption"> Đơn hàng </ng-template>
     <ng-template pTemplate="header">
@@ -204,7 +222,7 @@
 </p-table>
 </div>
 
-<div class="card" *ngIf="showSystemOrder">
+<div class="card" *ngIf="currentDashboard==='systemOrders'">
   <p-table [value]="systemOrderList" styleClass="p-datatable-gridlines" [tableStyle]="{ 'min-width': '50rem' }">
     <ng-template pTemplate="caption"> Toàn bộ đơn hàng </ng-template>
     <ng-template pTemplate="header">

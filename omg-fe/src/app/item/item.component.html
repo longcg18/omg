@@ -1,6 +1,8 @@
-<p-card header="{{plateNumber}}" [style]="{ width: '270px' , border: '1px solid black', margin: '10px'}"><ng-template pTemplate="header">
-    <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png" />
-</ng-template>
+<p-card header="{{plateNumber}}" [style]="{ width: '270px' , border: '1px solid gray', margin: '10px'}">
+    <ng-template pTemplate="header" id="image-container">
+        <img alt="Card" id="image-container" [src]="imageSrc" height="150" style="object-fit: contain;">
+        <!--img alt="Card" id="image" src="https://primefaces.org/cdn/primeng/images/usercard.png" /-->
+    </ng-template>
 <p>
     Biển số: {{plateNumber}} <br>
     Hãng xe: {{vendor}} <br>

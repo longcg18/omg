@@ -51,6 +51,11 @@ export class SessionService {
     }
 
     buyReversePrice(session: any): Observable<Session> {
+        this.socket.emit('setPrice', {
+            session
+        });
+        return this.socket.fromEvent<Session>('updatePrice').pipe();
+        
         return this.httpClient.put<Session>(saveOne, session).pipe();
     }
 

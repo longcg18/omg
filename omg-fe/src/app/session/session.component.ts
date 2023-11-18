@@ -123,26 +123,28 @@ export class SessionComponent implements OnInit {
       notify = "Bắt đầu sau: ";
       this.buttonDisabled = true;
       this.status = "upcoming";
-  
-
     } else if (this.currentTime.getTime() > this.startTime.getTime() 
       && this.currentTime.getTime() < this.closeTime.getTime() && 
       this.closeTime.getTime() - this.currentTime.getTime() > 0) {
         notify = "Kết thúc sau: ";
         this.likeButtonDisabled = false;
+        this.buttonDisabled = false;
         diffTime = this.closeTime.getTime() - this.currentTime.getTime();
         this.status = "opening"
     } else {
       notify = "Đã kết thúc được: ";
       diffTime = this.currentTime.getTime() - this.closeTime.getTime();
       this.buttonDisabled = true;
-      this.status = "closed"
+      this.likeButtonDisabled = true;
+      this.status = "closed";
     }
 
     this.sessionService.autoUpdateSession().subscribe((res: any) => {
       this.currentPrice = res.currentPrice;
       this.winner = res.winner;
       this.winnerInfo = res.winner.name;
+
+      this.closeTime = new Date(res.closeTime);
     })
     const hours = Math.floor(diffTime / 3600000);
     const minutes = Math.floor((diffTime % 3600000) / 60000);
@@ -172,4 +174,6 @@ export class SessionComponent implements OnInit {
       this.winnerInfo = res.winner.name;
     });
   }
+
+
 }

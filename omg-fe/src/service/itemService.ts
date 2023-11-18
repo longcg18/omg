@@ -16,6 +16,8 @@ const getAllItems = 'http://localhost:3000/item/';
 
 const createOneItem = 'http://localhost:3000/item/'
 
+const createOneItemwithImage = 'http://localhost:3000/item/upload'
+
 @Injectable({
     providedIn: 'root'
 })
@@ -41,11 +43,39 @@ export class ItemService {
         return this.httpClient.get<Item[]>(getAllItems).pipe();
     }
 
-    createOne(item: any, user: any) {
-        item.ownershipNumber = user.username + item.plateNumber;
-        item.owner = user;
-        item.status = 'available';
-        return this.httpClient.post(createOneItem, item).subscribe();
+    createOne(formData: FormData, user: any) {
+        let plateNumber = formData.get('plateNumber')?.toString();
+        let vendoer = '';
+
+        var item: any = {
+            plateNumber: formData.get('plateNumber')?.toString(),
+            type: formData.get('type')?.toString(),
+            ownershipNumber: user.username + formData.get('plateNumber'),
+            vendor: formData.get('vendor')?.toString(),
+            status: 'available',
+            image: formData.get('image'),
+            owner: user
+        };
+        // item.plateNumber = formData.get('plateNumber');
+        // item.type = formData.get('type');
+        // item.vendor = formData.get('vendor');
+        // item.image = formData.get('image');
+        // item.ownershipNumber = user.username + item.plateNumber;
+        // item.owner = user;
+        // item.status = 'available';
+        var file = item.image;
+
+        // let headers = new HttpHeaders();
+        // headers = headers.append('Content-Type', 'multipart/form-data');
+        // headers = headers.append('Accept', '*/*');
+        formData.append('ownerId', user.id);
+        formData.append('ownershipNumber', user.username + formData.get('plateNumber'));
+
+
+        //console.log(formData);
+        return this.httpClient.post<any>(createOneItemwithImage, formData).subscribe({
+            error: (error: any) => console.log(error)
+        });
     }
 
     getAllItemByUserId(userId: any): Observable<Item[]> {

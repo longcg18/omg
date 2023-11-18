@@ -1,4 +1,4 @@
-import { Component, OnInit, forwardRef } from '@angular/core';
+import { Component, OnInit, ViewChild, forwardRef } from '@angular/core';
 import { Item } from '../item/item';
 import { ItemService } from '../../service/itemService';
 import { MenuItem } from 'primeng/api';
@@ -13,7 +13,12 @@ import { Transaction } from '../transaction/transaction';
 import { OrderService } from 'src/service/orderService';
 import { Order } from '../order/order';
 import { MessageService } from 'primeng/api';
+import { FileUpload } from 'primeng/fileupload';
 
+interface UploadEvent {
+    originalEvent: Event;
+    files: File[];
+}
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -27,43 +32,28 @@ import { MessageService } from 'primeng/api';
   ]
 })
 export class DashboardComponent implements OnInit {
+    uploadedFiles: any[] = [];
     itemList!: Item[]; 
     sessionList!: Session[];
     transactionList!: Transaction[];
     orderList!: Session[];
     systemOrderList!: Session[];
     userList!: User[];
+    image!: File;
+
+    //@ViewChild('itemImage') itemImage!: File;
 
     filteredSessionList: Session[] = [];
 
     currentTime!: Date;
-
-
-
     menuItems!: MenuItem[];
     adminMenuItems!: MenuItem[];
 
-
-    hasShowItemForm: boolean = false;
-    hasShowSessionForm: boolean = false;
-
-    showFilter: boolean = false;
-    showNewUserForm: boolean = false;
-    showUsers: boolean = false;
-    showItem: boolean = false;
-    showSession: boolean = true;
-    showTransaction: boolean = false;
-    showOrder: boolean = false;
-    showSystemOrder: boolean = false;
-    showProfile: boolean = false;
-    editing: boolean = false;
-    profileSubmitButton: boolean = false;
-    profileEditButton: boolean = false;
+    currentDashboard: string | null = null;
 
     total: number = 0;
     summary: number = 0;
-
-    profileForm!: FormGroup;
+    previewUrl: string | null = null;
     newUserForm!: FormGroup;
 
     selectedItem!: Item;
@@ -285,20 +275,36 @@ export class DashboardComponent implements OnInit {
     }
 
     manageUser() {
-        this.showFilter = false;
-        this.showUsers = true;
-        this.showOrder = false;
-        this.showItem = false;
-        this.showSession = false;
-        this.showTransaction = false;
-        this.profileEditButton = false;
-        this.profileSubmitButton = false;
-        this.showSystemOrder = false;
-        this.showProfile = false;
+        this.currentDashboard = 'userManagement';
         this.userService.getAllUser().subscribe((res: any) => {
             this.userList = res;
         })
 
+    }
+
+    previewImage(file: File): void {
+        const reader = new FileReader();
+      
+        reader.onload = (e: any) => {
+          this.previewUrl = e.target.result;
+        };
+      
+        reader.readAsDataURL(file);
+      }
+
+    onChangeFile(event: any) {
+        const file = event.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = (e: any) => {
+                this.previewUrl = e.target.result;
+            };
+
+            reader.readAsDataURL(file);
+        }
+        this.image = event.target.files[0];
     }
 
     updateTime() {
@@ -306,67 +312,27 @@ export class DashboardComponent implements OnInit {
     }
 
     showItemForm() {
-        this.showFilter = false;
-        this.showUsers = false;
-        this.showOrder = false;
-        this.showItem = false;
-        this.showSession = false;
-        this.showTransaction = false;
-        this.profileEditButton = false;
-        this.profileSubmitButton = false;
-        this.showSystemOrder = false;
-        this.showUsers = false;
-        this.hasShowItemForm = true;
-        this.showProfile = false;
-
+        this.currentDashboard = 'createItem';
     }
 
     showProfileForm() {
-        this.showFilter = false;
-        this.showOrder = false;
-        this.showItem = false;
-        this.showSession = false;
-        this.showTransaction = false;
-        this.profileEditButton = true;
-        this.profileSubmitButton = false;
-        this.showSystemOrder = false;
-        this.showUsers = false;
-
-        var dob = new Date(this.user.birthday).getDay()
-
-        this.profileForm = this.formBuilder.group({
-            name: [this.user.name, Validators.required],
-            address: [this.user.address, Validators.required],
-            birthday: [this.user.birthday, Validators.required],
-            phone: [this.user.phone, Validators.required]
-        })
-        this.showProfile = true;
-
+        this.currentDashboard = 'myProfile';
     }
 
     showSessionForm() {
-        this.showFilter = false;
-        this.showSystemOrder = false;
-        this.hasShowSessionForm = true;
-        this.showUsers = false;
-        this.showProfile = false;
-        this.showOrder = false;
-
-    }
-
-    requestEditProfile() {
-        this.showFilter = false;
-        this.editing = true;
-        this.profileSubmitButton = true;
-        this.profileEditButton = false;
-        this.showSystemOrder = false;
-        this.showUsers = false;
-        this.showProfile = true;
-        this.showOrder = false;
-
+        this.currentDashboard = 'createSession';
     }
 
     createItem() {
+        if (!this.image) {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Vui lòng kiểm tra lại!',
+                detail: 'Phải tải lên ít nhất một ảnh!'
+              })
+            return;
+        }
+
         if (this.newItem.plateNumber == '') {
             this.messageService.add({
               severity: 'error',
@@ -374,26 +340,41 @@ export class DashboardComponent implements OnInit {
               detail: 'Biển số xe không được để trống!'
             })
             return;
-          }
-      
-          if (this.newItem.vendor == '') {
+        }
+    
+        if (this.newItem.vendor == '') {
             this.messageService.add({
-              severity: 'error',
-              summary: 'Vui lòng kiểm tra lại!',
-              detail: 'Nhãn hiệu không được để trống!'
+                severity: 'error',
+                summary: 'Vui lòng kiểm tra lại!',
+                detail: 'Nhãn hiệu không được để trống!'
             })
-            return;
-          }
+        return;
+        }
       
-          if (this.newItem.type == '') {
+        if (this.newItem.type == '') {
             this.messageService.add({
               severity: 'error',
               summary: 'Vui lòng kiểm tra lại!',
               detail: 'Loại xe không được để trống!'
             })
             return;
-          }
-        this.itemService.createOne(this.newItem, this.user);
+        }
+
+        let formData = new FormData();
+
+        //formData.append('image', this.itemImage);
+        console.log(this.image);
+        formData.append('plateNumber', this.newItem.plateNumber);
+        formData.append('vendor', this.newItem.vendor);
+        formData.append('type', this.newItem.type);
+        formData.append('image', this.image, this.image.name);
+        formData.append('imageName', this.image.name);
+
+        // console.log(this.newItem);
+        // this.newItem.images = this.uploadedFiles;
+        
+        console.log(formData);
+        this.itemService.createOne(formData, this.user);
         window.location.reload();
         this.messageService.add({
             severity: 'success',
@@ -401,6 +382,15 @@ export class DashboardComponent implements OnInit {
         })
     }
 
+    imageOnSelect(event: any) {
+        this.image = event.target;
+        console.log(this.image);
+    }
+
+    imageOnUpload(event: any) {
+        console.log(event.files);
+
+    }
     logOut() {
         this.userService.logout();
         this.messageService.add({
@@ -410,7 +400,6 @@ export class DashboardComponent implements OnInit {
     }
 
     createSession() {
-        this.showFilter = false;
         var newSession: any = {
             id: 0,
             startTime: this.newSession.startTime,
@@ -432,11 +421,11 @@ export class DashboardComponent implements OnInit {
     }
 
     cancelCreateSession() {
-        this.hasShowSessionForm = false;
+        this.currentDashboard = null;
     }
 
     cancelCreateItem() {
-        this.hasShowItemForm = false;
+        this.currentDashboard = null;
     }
 
     filterResults(text: string) {
@@ -448,16 +437,7 @@ export class DashboardComponent implements OnInit {
         );
     }
     showRunningSession () {
-        this.showFilter = true; 
-
-        this.showSystemOrder = false;
-        this.showUsers = false;
-        this.showProfile = false;
-        this.showSession = true;
-        this.showItem = false;
-        this.showTransaction = false;
-        this.showOrder = false;
-
+        this.currentDashboard = 'runningSession';
         this.sessionService.getAllSessions().subscribe((res: any) => {
             this.sessionList = res;
             this.filteredSessionList = this.sessionList;
@@ -470,16 +450,7 @@ export class DashboardComponent implements OnInit {
     }
 
     showMyItem() {
-        this.showFilter = false; 
-
-        this.showSystemOrder = false;
-        this.showUsers = false;
-        this.showProfile = false;
-        this.showItem = true;
-        this.showSession = false;
-        this.showTransaction = false;
-        this.showOrder = false;
-
+        this.currentDashboard = 'myItems';
         if (this.role == 1) {
             this.messageService.add({
                 severity: 'success',
@@ -494,16 +465,7 @@ export class DashboardComponent implements OnInit {
     }
 
     showMyOrder() {
-        this.showFilter = false; 
-
-        this.showItem = false;
-        this.showSession = false;
-        this.showUsers = false;
-        this.showProfile = false;
-        this.showTransaction = false;
-        this.showOrder = true;
-        this.showSystemOrder = false;
-
+        this.currentDashboard = 'myOrders';
         this.sessionService.getAllSessionsByWinnerId(this.user.id).subscribe((res: any) => {
             this.orderList = res;    
         })
@@ -514,17 +476,8 @@ export class DashboardComponent implements OnInit {
     }
 
     showSystemOrders () {
-        this.showFilter = false; 
-
-        this.showItem = false;
-        this.showSession = false;
-        this.showTransaction = false;
-        this.showUsers = false;
-        this.showProfile = false;
-        this.showSystemOrder = true;
-
+        this.currentDashboard = 'systemOrders'
         this.sessionService.getOrder().subscribe((res: any) => {
-            //console.log(res);
             this.systemOrderList = res;
     
         })
@@ -533,8 +486,9 @@ export class DashboardComponent implements OnInit {
             summary: 'Hiển thị lịch sử thắng đấu giá của mọi người!'
         })
     }
+
     showMyTransaction() {
-        this.showFilter = false; 
+        this.currentDashboard = 'myTransactions';
 
         this.summary = 0;
         this.transactionService.getAllTransaction(this.user.id).subscribe((res: any) => {
@@ -546,71 +500,15 @@ export class DashboardComponent implements OnInit {
                 this.summary += i.money;
             }
         });
-        this.showSystemOrder = false;
-        this.showUsers = false;
-        this.showProfile = false;
-        this.showOrder = false;
-        this.showItem = false;
-        this.showSession = false;
-        this.showTransaction = true;
+
         this.messageService.add({
             severity: 'info',
             summary: 'Hiển thị lịch sử đặt giá!'
         })
     }
 
-    onSubmitProfile() {
-        this.showFilter = false; 
-
-        this.editing = true;
-        if (this.f['phone'].value == this.user.phone &&
-        this.f['name'].value == this.user.name &&
-        this.f['birthday'].value == this.user.birthday &&
-        this.f['address'].value == this.user.address) {
-            this.messageService.add({
-                severity: 'error',
-                summary: 'Vui lòng kiểm tra lại!',
-                detail: 'Không có gì thay đổi!'
-            })
-            return;
-        } else {
-            this.user.phone = this.f['phone'].value;
-            this.user.name = this.f['name'].value;
-            this.user.birthday = this.f['birthday'].value;
-            this.user.address = this.f['address'].value;
-
-            this.userService.updateProfile(this.user).subscribe(
-                (res: any) => {
-                    this.messageService.add({
-                        severity: 'success',
-                        summary: 'Cập nhật thành công!',
-                        detail: 'Thông tin của ' + this.f['name'].value + ' đã được lưu lại!'
-                    });
-                    this.editing = false;
-                    this.profileEditButton = true;
-                    this.profileSubmitButton = false;
-                },
-                (error) => {
-                    this.messageService.add({
-                        severity: 'error',
-                        summary: error.error.message,
-                        detail: 'Vui lòng kiểm tra lại!'
-                    })
-                }
-            )
-        }
-    }
-
     onCancelProfile() {
-        this.showProfile = false;
-        this.editing = false;
-        this.showUsers = false;
-        this.showOrder = false;
-
-    }
-
-    get f() {
-        return this.profileForm.controls;
+        this.currentDashboard = null;
     }
 
     get userForm() {
@@ -618,16 +516,7 @@ export class DashboardComponent implements OnInit {
     }
 
     createNewUser() {
-        this.showFilter = false; 
-
-        this.showNewUserForm = true;
-        this.showItem = false;
-        this.showSession = false;
-        this.showTransaction = false;
-        this.showOrder = false;
-        this.showSystemOrder = false;
-        this.showUsers = false;
-
+        this.currentDashboard = 'createUser';
         this.newUserForm = this.formBuilder.group({
             name: ['', Validators.required],
             username: ['', Validators.required],
@@ -637,7 +526,7 @@ export class DashboardComponent implements OnInit {
     }
 
     onCancelCreateUser() {
-        this.showNewUserForm = false;
+        this.currentDashboard = null;
     }
 
     onSubmitCreateUser() {
@@ -696,7 +585,6 @@ export class DashboardComponent implements OnInit {
                     summary: 'Đăng ký thành công!',
                     detail: 'Người dùng mới: ' + user.name
                 });
-                this.showNewUserForm = false;
                 window.location.reload();
             },
             (error) => {
@@ -709,8 +597,7 @@ export class DashboardComponent implements OnInit {
         );
     }
 
-    isEmail(search:string):boolean
-    {
+    isEmail(search: string): boolean {
         const expression: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
         const email: string = search;
