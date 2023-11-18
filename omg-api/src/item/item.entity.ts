@@ -24,7 +24,7 @@ export class Item {
     @Column({default: 'Honda'})
     vendor: string;
 
-    @Column({default: 'avaiable'})
+    @Column({default: 'available'})
     status: string;
 
     @Column({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
@@ -44,4 +44,10 @@ export class Item {
     @OneToOne(() => Order, (order) => order.item) 
     @JoinColumn()
     order: Order;
+
+    @Column('mediumblob', {nullable:true})
+    image: Buffer;
+
+    @Column({charset: 'utf8', collation: 'utf8_general_ci', nullable: true}) 
+    imageName: string;
 }

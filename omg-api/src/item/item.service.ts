@@ -46,6 +46,7 @@ export class ItemService {
     }
 
     async create(item: Item): Promise<Item> {
+        console.log(item.image);
         return await this.itemRepo.save(item);
     }
 
