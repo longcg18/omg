@@ -34,6 +34,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { HomePageComponent } from './home-page/home-page.component';
 import { DialogModule } from 'primeng/dialog';
 import { FileUploadModule } from 'primeng/fileupload';
+import { SessionDetailComponent } from './session-detail/session-detail.component';
 
 
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
@@ -47,7 +48,8 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     UserComponent,
     TransactionComponent,
     OrderComponent,
-    HomePageComponent
+    HomePageComponent,
+    SessionDetailComponent
   ],
   imports: [
     BrowserModule,

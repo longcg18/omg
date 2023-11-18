@@ -159,9 +159,9 @@ export class ItemComponent implements OnInit{
         this.messageService.add({
           severity: 'success',
           summary: 'Cập nhật thành công!',
-          detail: this.f['plateNumber'].value + '\n' 
+          detail: this.f['type'].value + '\n' 
           + this.f['vendor'].value + '\n'
-          + this.f['type'].value 
+          + this.f['plateNumber'].value 
         });
         this.editing = false;
         this.vendor = this.f['vendor'].value;

@@ -6,6 +6,7 @@ import { SigninComponent } from './user/signin.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AppComponent } from './app.component';
 import { HomePageComponent } from './home-page/home-page.component';
+import { SessionDetailComponent } from './session-detail/session-detail.component';
 
 const routes: Routes = [
   {
@@ -19,6 +20,9 @@ const routes: Routes = [
   },
   {
     path: 'dashboard', component: DashboardComponent
+  },
+  {
+    path: 'room/:sessionId', component: SessionDetailComponent
   }
 ];
 

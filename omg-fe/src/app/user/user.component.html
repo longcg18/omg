@@ -17,40 +17,40 @@
             <p-button id="editButton" icon="pi pi-play" (click)="startButtonClicked()" [disabled]="startButtonDisabled"></p-button>
         </ng-template>
     </p-card>
-<div class="flex align-content-center flex-wrap" *ngIf="editing">
-    <p-dialog header="Chỉnh sửa thông tin cá nhân" [visible]="true" [modal]="true" [style]="{width: '50vw'}">
-        <form [formGroup]="form" class="" id="item-editor-form">
-            <div class="form-group block">
-                <label htmlFor="name">Tên người dùng</label> <br>
-                <input type="text" class="w-full mb-3" pInputText readonly name="username" id="username" formControlName="username"/> <br>
-            </div>
-            <div class="form-group block">
-                <label htmlFor="name">Họ và tên</label> <br>
-                <input type="text" class="w-full mb-3" *ngIf="editing" pInputText name="name" id="name" formControlName="name"/> <br>
-            </div>
-            <div class="form-group block">
-                <label htmlFor="name">Email</label> <br>
-                <input type="text" class="w-full mb-3" readonly pInputText name="email" id="email" formControlName="email"/> <br>
-            </div>
-            <div class="form-group block">
-                <label htmlFor="address">Địa chỉ</label><br>
-                <input type="text" class="w-full mb-3" *ngIf="editing" pInputText name="address" id="address" formControlName="address"/> <br>
-            </div>
+    <div class="flex align-content-center flex-wrap" *ngIf="editing">
+        <p-dialog header="Chỉnh sửa thông tin cá nhân" [visible]="true" [modal]="true" [style]="{width: '50vw'}">
+            <form [formGroup]="form" class="" id="item-editor-form">
+                <div class="form-group block">
+                    <label htmlFor="name">Tên người dùng</label> <br>
+                    <input type="text" class="w-full mb-3" pInputText readonly name="username" id="username" formControlName="username"/> <br>
+                </div>
+                <div class="form-group block">
+                    <label htmlFor="name">Họ và tên</label> <br>
+                    <input type="text" class="w-full mb-3" *ngIf="editing" pInputText name="name" id="name" formControlName="name"/> <br>
+                </div>
+                <div class="form-group block">
+                    <label htmlFor="name">Email</label> <br>
+                    <input type="text" class="w-full mb-3" readonly pInputText name="email" id="email" formControlName="email"/> <br>
+                </div>
+                <div class="form-group block">
+                    <label htmlFor="address">Địa chỉ</label><br>
+                    <input type="text" class="w-full mb-3" *ngIf="editing" pInputText name="address" id="address" formControlName="address"/> <br>
+                </div>
 
-            <div class="form-group block">
-            <label htmlFor="phone">Số điện thoại</label><br>
-            <input type="text" class="w-full mb-3" *ngIf="editing" pInputText name="phone" id="phone" formControlName="phone"/> <br>
-            <div class="form-group block">
-                <label htmlFor="type">Sinh nhật</label><br>
-                <p-calendar class="w-full mb-3" *ngIf="editing" formControlName="birthday"></p-calendar> <br> <br>
-            </div>
-        </div>
-            <p-button label="Xác nhận" (click)="onSubmitProfile()"></p-button> 
-            &nbsp;
-            <p-button label="Huỷ" (click)="onCancelProfile()"></p-button>
-        </form>
-    </p-dialog>
-        
-</div>
+                <div class="form-group block">
+                    <label htmlFor="phone">Số điện thoại</label><br>
+                    <input type="text" class="w-full mb-3" *ngIf="editing" pInputText name="phone" id="phone" formControlName="phone"/> <br>
+                    <div class="form-group block">
+                        <label htmlFor="type">Sinh nhật</label><br>
+                        <p-calendar class="w-full mb-3" *ngIf="editing" formControlName="birthday"></p-calendar> <br> <br>
+                    </div>
+                </div>
+                <p-button label="Xác nhận" (click)="onSubmitProfile()"></p-button> 
+                &nbsp;
+                <p-button label="Huỷ" (click)="onCancelProfile()"></p-button>
+            </form>
+        </p-dialog>
+            
+    </div>
 
 </div>

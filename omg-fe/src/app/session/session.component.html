@@ -1,35 +1,37 @@
 <p-card header='{{plateNumber}}' [(ngModel)]="sessionId" name="sessionId" [style]="{ width: '300px' , border: '1px solid black', margin: '10px'}"><ng-template pTemplate="header">
     <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png" />
-</ng-template>
+    </ng-template>
 
-    Mã phiên: {{sessionId}} <br>
-
-
-    Giá hiện tại: {{currentPrice}} <br>
+        Mã phiên: {{sessionId}} <br>
 
 
-    Giá cuối cùng: {{reversePrice}} <br>
+        Giá hiện tại: {{currentPrice}} <br>
 
 
-    Bước nhảy giá: {{stepPrice}} <br>
+        Giá cuối cùng: {{reversePrice}} <br>
 
 
-    Thời gian bắt đầu: {{this.startTime | date: 'HH:mm:ss'}} <br>
+        Bước nhảy giá: {{stepPrice}} <br>
 
 
-    Thời gian kết thúc: {{this.closeTime | date: 'HH:mm:ss'}} <br>
+        Thời gian bắt đầu: {{this.startTime | date: 'HH:mm:ss'}} <br>
 
-    Người thắng: {{this.winnerInfo}} <br>
 
-    {{this.sessionDuration}}
+        Thời gian kết thúc: {{this.closeTime | date: 'HH:mm:ss'}} <br>
 
-<ng-template pTemplate="footer">
-    <p-button id="LikeButton" icon="pi pi-angle-double-up" (click)="likeButtonClicked()" [disabled]="likeButtonDisabled"></p-button>
-    <p-button id="DisLikeButton" icon="pi pi-thumbs-down" (click)="disLikeButtonClicked()" [disabled]="buttonDisabled"></p-button>
+        Người thắng: {{this.winnerInfo}} <br>
 
-    <p-button id="SaveButton" icon="pi pi-save" (click)="saveButtonClicked()" [disabled]="buttonDisabled"></p-button>
-    
-    <p-button id="Buy" icon="pi pi-paypal" (click)="buyButtonClicked()" [disabled]="buttonDisabled"></p-button>
+        {{this.sessionDuration}}
 
-</ng-template>
+    <ng-template pTemplate="footer">
+        <p-button id="LikeButton" icon="pi pi-angle-double-up" (click)="likeButtonClicked()" [disabled]="likeButtonDisabled"></p-button>
+        <p-button id="DisLikeButton" icon="pi pi-search" (click)="expandButtonClicked()" [disabled]="buttonDisabled"></p-button>
+
+        <p-button id="SaveButton" icon="pi pi-save" (click)="saveButtonClicked()" [disabled]="buttonDisabled"></p-button>
+        
+        <p-button id="Buy" icon="pi pi-paypal" (click)="buyButtonClicked()" [disabled]="buttonDisabled"></p-button>
+
+    </ng-template>
 </p-card>
+
+<!--app-session-detail class="sessionDetail" [sessionId]="getSessionId()"></app-session-detail-->

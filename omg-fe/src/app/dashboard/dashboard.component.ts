@@ -32,6 +32,7 @@ interface UploadEvent {
   ]
 })
 export class DashboardComponent implements OnInit {
+[x: string]: any;
     uploadedFiles: any[] = [];
     itemList!: Item[]; 
     sessionList!: Session[];
@@ -49,7 +50,7 @@ export class DashboardComponent implements OnInit {
     menuItems!: MenuItem[];
     adminMenuItems!: MenuItem[];
 
-    currentDashboard: string | null = null;
+    public static currentDashboard: string | null = null;
 
     total: number = 0;
     summary: number = 0;
@@ -275,7 +276,7 @@ export class DashboardComponent implements OnInit {
     }
 
     manageUser() {
-        this.currentDashboard = 'userManagement';
+        DashboardComponent.currentDashboard = 'userManagement';
         this.userService.getAllUser().subscribe((res: any) => {
             this.userList = res;
         })
@@ -312,15 +313,15 @@ export class DashboardComponent implements OnInit {
     }
 
     showItemForm() {
-        this.currentDashboard = 'createItem';
+        DashboardComponent.currentDashboard = 'createItem';
     }
 
     showProfileForm() {
-        this.currentDashboard = 'myProfile';
+        DashboardComponent.currentDashboard = 'myProfile';
     }
 
     showSessionForm() {
-        this.currentDashboard = 'createSession';
+        DashboardComponent.currentDashboard = 'createSession';
     }
 
     createItem() {
@@ -421,11 +422,11 @@ export class DashboardComponent implements OnInit {
     }
 
     cancelCreateSession() {
-        this.currentDashboard = null;
+        DashboardComponent.currentDashboard = null;
     }
 
     cancelCreateItem() {
-        this.currentDashboard = null;
+        DashboardComponent.currentDashboard = null;
     }
 
     filterResults(text: string) {
@@ -437,7 +438,7 @@ export class DashboardComponent implements OnInit {
         );
     }
     showRunningSession () {
-        this.currentDashboard = 'runningSession';
+        DashboardComponent.currentDashboard = 'runningSession';
         this.sessionService.getAllSessions().subscribe((res: any) => {
             this.sessionList = res;
             this.filteredSessionList = this.sessionList;
@@ -450,7 +451,7 @@ export class DashboardComponent implements OnInit {
     }
 
     showMyItem() {
-        this.currentDashboard = 'myItems';
+        DashboardComponent.currentDashboard = 'myItems';
         if (this.role == 1) {
             this.messageService.add({
                 severity: 'success',
@@ -465,7 +466,7 @@ export class DashboardComponent implements OnInit {
     }
 
     showMyOrder() {
-        this.currentDashboard = 'myOrders';
+        DashboardComponent.currentDashboard = 'myOrders';
         this.sessionService.getAllSessionsByWinnerId(this.user.id).subscribe((res: any) => {
             this.orderList = res;    
         })
@@ -476,7 +477,7 @@ export class DashboardComponent implements OnInit {
     }
 
     showSystemOrders () {
-        this.currentDashboard = 'systemOrders'
+        DashboardComponent.currentDashboard = 'systemOrders'
         this.sessionService.getOrder().subscribe((res: any) => {
             this.systemOrderList = res;
     
@@ -488,7 +489,7 @@ export class DashboardComponent implements OnInit {
     }
 
     showMyTransaction() {
-        this.currentDashboard = 'myTransactions';
+        DashboardComponent.currentDashboard = 'myTransactions';
 
         this.summary = 0;
         this.transactionService.getAllTransaction(this.user.id).subscribe((res: any) => {
@@ -508,7 +509,7 @@ export class DashboardComponent implements OnInit {
     }
 
     onCancelProfile() {
-        this.currentDashboard = null;
+        DashboardComponent.currentDashboard = null;
     }
 
     get userForm() {
@@ -516,7 +517,7 @@ export class DashboardComponent implements OnInit {
     }
 
     createNewUser() {
-        this.currentDashboard = 'createUser';
+        DashboardComponent.currentDashboard = 'createUser';
         this.newUserForm = this.formBuilder.group({
             name: ['', Validators.required],
             username: ['', Validators.required],
@@ -526,7 +527,7 @@ export class DashboardComponent implements OnInit {
     }
 
     onCancelCreateUser() {
-        this.currentDashboard = null;
+        DashboardComponent.currentDashboard = null;
     }
 
     onSubmitCreateUser() {
@@ -605,4 +606,8 @@ export class DashboardComponent implements OnInit {
         return result
     }
 
+
+    public getCurrentDashboard() {
+        return DashboardComponent.currentDashboard;
+    }
 }

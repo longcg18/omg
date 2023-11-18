@@ -9,6 +9,8 @@ import { UserService } from 'src/service/userService';
 import { User } from '../user/user';
 import { OrderService } from 'src/service/orderService';
 import { ItemService } from 'src/service/itemService';
+import { DashboardComponent } from '../dashboard/dashboard.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-session',
@@ -28,7 +30,7 @@ export class SessionComponent implements OnInit {
   currentPrice!: number;
   public session!: Session;
   item!: Item;
-
+  onFocus: boolean = false;
   plateNumber!: string;
 
   buttonDisabled: boolean = false;
@@ -54,7 +56,8 @@ export class SessionComponent implements OnInit {
     private transactionService: TransactionService,
     private userService: UserService,
     private itemService: ItemService,
-    private orderService: OrderService
+    private orderService: OrderService,
+    private router: Router
   ) {}
   ngOnInit(): void {
     this.sessionService.getOne(this.sessionId).subscribe((res:any) => {
@@ -175,5 +178,18 @@ export class SessionComponent implements OnInit {
     });
   }
 
+  expandButtonClicked() {
+    DashboardComponent.currentDashboard = "expandSession";
+    this.router.navigate(['/room', this.sessionId]);
+  }
 
+
+  public getCurrentDashboard() {
+    return DashboardComponent.currentDashboard;
+  }
+
+
+  getSessionId() {
+    return this.sessionId;
+  }
 }
