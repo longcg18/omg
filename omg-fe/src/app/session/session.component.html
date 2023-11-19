@@ -1,37 +1,45 @@
-<p-card header='{{plateNumber}}' [(ngModel)]="sessionId" name="sessionId" [style]="{ width: '300px' , border: '1px solid black', margin: '10px'}"><ng-template pTemplate="header">
-    <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png" />
-    </ng-template>
 
-        Mã phiên: {{sessionId}} <br>
+<div class="col-12 lg:col-12">
+    <div class="shadow-3 p-3 w-full surface-card" [(ngModel)]="sessionId" name="sessionId" style="border-radius: 6px">
+        <div class="grid">
+            <div class="col-2">
+                <div class="text-blue-900 font-bold text-2xl mb-3">
+                    {{plateNumber}}
+                </div>
+            </div>
+            <div class="col-1">
+                <div class="text-900 font-medium text-xl mb-2">id#<b>{{sessionId}}</b></div>
+            </div>
+            <div class="col-3">
+                <div class="text-900 font-medium text-xl mb-2">
+                    Giá hiện tại <b>{{currentPrice | currency:'USD'}}</b>  
+                </div>
+                
+            </div>
+            <div class="col-3">
+                <div class="text-900 font-medium text-xl mb-2">
+                    Giá cuối cùng <b>{{reversePrice | currency:'USD'}}</b>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="text-900 font-medium text-xl mb-2">
+                    Người thắng <b>{{this.winnerInfo}}</b>
+                </div>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="col-9">
+                <div class="text-blue-800 text-xl mb-2">{{this.sessionDuration}}</div>
+            </div>
+            <div class="col-3">
+                <button pButton pRipple id="expandButton" class="p-3 p-button-outlined" icon="pi pi-search" label="Chi tiết" (click)="expandButtonClicked()"></button>
+            </div>
+        </div>
+    </div>
+</div>
 
-
-        Giá hiện tại: {{currentPrice}} <br>
-
-
-        Giá cuối cùng: {{reversePrice}} <br>
-
-
-        Bước nhảy giá: {{stepPrice}} <br>
-
-
-        Thời gian bắt đầu: {{this.startTime | date: 'HH:mm:ss'}} <br>
-
-
-        Thời gian kết thúc: {{this.closeTime | date: 'HH:mm:ss'}} <br>
-
-        Người thắng: {{this.winnerInfo}} <br>
-
-        {{this.sessionDuration}}
-
-    <ng-template pTemplate="footer">
-        <p-button id="LikeButton" icon="pi pi-angle-double-up" (click)="likeButtonClicked()" [disabled]="likeButtonDisabled"></p-button>
-        <p-button id="DisLikeButton" icon="pi pi-search" (click)="expandButtonClicked()" [disabled]="buttonDisabled"></p-button>
-
-        <p-button id="SaveButton" icon="pi pi-save" (click)="saveButtonClicked()" [disabled]="buttonDisabled"></p-button>
-        
-        <p-button id="Buy" icon="pi pi-paypal" (click)="buyButtonClicked()" [disabled]="buttonDisabled"></p-button>
-
-    </ng-template>
-</p-card>
-
-<!--app-session-detail class="sessionDetail" [sessionId]="getSessionId()"></app-session-detail-->
+<!--div class="">
+    <b>Mã phiên </b>{{sessionId}} 
+    <b>Giá hiện tại </b>{{currentPrice}} 
+    <b>Giá cuối cùng </b> {{reversePrice}} 
+</div-->

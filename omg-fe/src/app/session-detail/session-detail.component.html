@@ -1,5 +1,4 @@
 <div class="surface-ground px-2 py-3 md:px-4 lg:px-4">
-
     <div class="grid nested-grid">
         <div class="col-9">
             <div class="grid">
@@ -11,9 +10,9 @@
                 </div>
                 <div class="col-12 lg:col-6">
                     <div class="p-1 h-full">
-                        <div class="shadow-2 p-2 h-full flex flex-column surface-card" style="border-radius: 6px">
+                        <div class="shadow-2 p-3 h-full flex flex-column surface-card" style="border-radius: 6px">
                             <div class="text-900 font-medium text-xl mb-2">Giá hiện tại</div>
-                            <div class="text-600">Tiếp tục đặt giá</div>
+                            <div class="text-600">Tiếp tục tăng giá</div>
                             <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
                             <div class="flex align-items-center">
                                 <span class="font-bold text-2xl text-900">${{currentPrice}}</span>
@@ -23,28 +22,24 @@
                             <ul class="list-none p-0 m-0 flex-grow-1">
                                 <li class="flex align-items-center mb-3">
                                     <i class="pi pi-check-circle text-green-500 mr-2"></i>
-                                    <span class="text-900">Arcu vitae elementum</span>
+                                    <span class="text-900">Bước nhảy giá ${{stepPrice}}</span>
                                 </li>
                                 <li class="flex align-items-center mb-3">
                                     <i class="pi pi-check-circle text-green-500 mr-2"></i>
-                                    <span class="text-900">Dui faucibus in ornare</span>
-                                </li>
-                                <li class="flex align-items-center mb-3">
-                                    <i class="pi pi-check-circle text-green-500 mr-2"></i>
-                                    <span class="text-900">Morbi tincidunt augue</span>
+                                    <span class="text-900">Giá tiếp theo ${{currentPrice + stepPrice}}</span>
                                 </li>
                             </ul>
                             <hr class="mb-3 mx-0 border-top-1 border-none surface-border mt-auto" />
-                            <button pButton pRipple label="Đặt giá" class="p-3 w-full mt-auto"></button>
+                            <button pButton pRipple label="Đặt giá" (click)="setPrice()" [disabled]="setPriceButtonDisabled" class="p-3 w-full mt-auto"></button>
                         </div>
                     </div>
                 </div>
         
                 <div class="col-12 lg:col-6">
                     <div class="p-1 h-full">
-                        <div class="shadow-2 p-2 h-full flex flex-column surface-card" style="border-radius: 6px">
+                        <div class="shadow-2 p-3 h-full flex flex-column surface-card" style="border-radius: 6px">
                             <div class="text-900 font-medium text-xl mb-2">Giá mua thẳng</div>
-                            <div class="text-600">Giá cuối cùng</div>
+                            <div class="text-600">Sở hữu sản phẩm ngay lập tức</div>
                             <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
                             <div class="flex align-items-center">
                                 <span class="font-bold text-2xl text-900">${{reversePrice}}</span>
@@ -54,23 +49,15 @@
                             <ul class="list-none p-0 m-0 flex-grow-1">
                                 <li class="flex align-items-center mb-3">
                                     <i class="pi pi-check-circle text-green-500 mr-2"></i>
-                                    <span class="text-900">Arcu vitae elementum</span>
+                                    <span class="text-900">Không cần đấu tranh đặt giá</span>
                                 </li>
                                 <li class="flex align-items-center mb-3">
                                     <i class="pi pi-check-circle text-green-500 mr-2"></i>
-                                    <span class="text-900">Dui faucibus in ornare</span>
-                                </li>
-                                <li class="flex align-items-center mb-3">
-                                    <i class="pi pi-check-circle text-green-500 mr-2"></i>
-                                    <span class="text-900">Morbi tincidunt augue</span>
-                                </li>
-                                <li class="flex align-items-center mb-3">
-                                    <i class="pi pi-check-circle text-green-500 mr-2"></i>
-                                    <span class="text-900">Duis ultricies lacus sed</span>
+                                    <span class="text-900">Freeship</span>
                                 </li>
                             </ul>
                             <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
-                            <button pButton pRipple label="Mua thẳng" class="p-3 w-full"></button>
+                            <button pButton pRipple label="Mua thẳng" (click)="buyButtonClicked()" [disabled]="buyButtonDisabled"  class="p-3 w-full"></button>
                         </div>
                     </div>
                 </div>
@@ -79,39 +66,23 @@
         </div>
         
         <div class="col-3">
-            <div class="shadow-2 p-2 surface-card" style="border-radius: 6px">
-                <div class="text-blue-500 font-medium text-2xl mb-2">{{sessionDuration}}</div>
-                <div class="text-600">{{timeNote}}</div>
+            <div class="shadow-2 p-3 surface-card" style="border-radius: 6px">
+                <div class="text-blue-500 text-center font-bold text-4xl mb-2">{{sessionDuration}}</div>
+                <div class="text-600 text-center">{{timeNote}}</div>
                 <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
                 <div class="flex align-items-center">
-                    <span class="font-bold text-2xl text-900">$49</span>
-                    <span class="ml-2 font-medium text-600">per month</span>
+                    <div class="font-bold text-2xl text-900">{{this.winnerInfo}}</div>
+                    <span class="ml-2 font-medium text-600">winner</span>
                 </div>
                 <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
                 <ul class="list-none p-0 m-0 flex-grow-1">
                     <li class="flex align-items-center mb-3">
-                        <i class="pi pi-check-circle text-green-500 mr-2"></i>
-                        <span class="text-900">Arcu vitae elementum</span>
+                        <i class="pi pi-info-circle text-green-500 mr-2"></i>
+                        <span class="text-900">Khi hết thời gian, người thắng sẽ là {{this.winnerInfo}}</span>
                     </li>
-                    <li class="flex align-items-center mb-3">
-                        <i class="pi pi-check-circle text-green-500 mr-2"></i>
-                        <span class="text-900">Dui faucibus in ornare</span>
-                    </li>
-                    <li class="flex align-items-center mb-3">
-                        <i class="pi pi-check-circle text-green-500 mr-2"></i>
-                        <span class="text-900">Morbi tincidunt augue</span>
-                    </li>
-                    <li class="flex align-items-center mb-3">
-                        <i class="pi pi-check-circle text-green-500 mr-2"></i>
-                        <span class="text-900">Duis ultricies lacus sed</span>
-                    </li>
-                    <li class="flex align-items-center mb-3">
-                        <i class="pi pi-check-circle text-green-500 mr-2"></i>
-                        <span class="text-900">Imperdiet proin</span>
-                    </li>
-                    <li class="flex align-items-center mb-3">
-                        <i class="pi pi-check-circle text-green-500 mr-2"></i>
-                        <span class="text-900">Nisi scelerisque</span>
+                    <li *ngFor="let notification of notifications" class="flex align-items-center mb-3">
+                        <i class="pi pi-info-circle text-green-500 mr-2"></i>
+                        <span class="text-900">{{ notification }}</span>
                     </li>
                 </ul>
                 <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
@@ -119,4 +90,8 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="card flex justify-content-center gap-2">
+    <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
 </div>

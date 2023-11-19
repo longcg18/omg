@@ -96,13 +96,7 @@
       <input type="file" id="image" (change)="onChangeFile($event)" name="image" class="custom-file-input">
       <label for="image" class="custom-file-label">Chọn ảnh</label>
     </div>
-
-    
-    
-
     <br>
-    
-
     <p-button type="submit" (click)="createItem()">Xác nhận</p-button>
     &nbsp;
     <p-button type="submit" (click)="cancelCreateItem()">Huỷ</p-button>
@@ -157,13 +151,18 @@
 </div>
 
 
+<!--div *ngIf="getCurrentDashboard()==='runningSession'">
+
+</div-->
+
 <div *ngIf="getCurrentDashboard()==='runningSession'" style="margin-top: 1%;">
-  <input type="text" style="margin-left: 1%;" pInputText placeholder="Tìm kiếm theo biển số" #filter>
+  <input type="text" style="margin-left: 1%;" pInputText placeholder="Tìm kiếm theo biển số" #filter> &nbsp;
   <p-button class="primary" type="button" (click)="filterResults(filter.value)">Search</p-button>
   <div class="session-container">
-    <div *ngFor="let session of filteredSessionList; let i = index">
+    <div class="grid  w-full" *ngFor="let session of filteredSessionList; let i = index">
+      <div class="col-12">
         <app-session class="session" [sessionId]="session.id" ngDefaultControl="true"></app-session>
-        <div *ngIf="i%4 === 3 || i === filteredSessionList.length - 1" class="clearfix"></div>
+      </div>
     </div>
   </div>
 </div>

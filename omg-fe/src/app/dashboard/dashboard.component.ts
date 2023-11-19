@@ -32,7 +32,7 @@ interface UploadEvent {
   ]
 })
 export class DashboardComponent implements OnInit {
-[x: string]: any;
+    [x: string]: any;
     uploadedFiles: any[] = [];
     itemList!: Item[]; 
     sessionList!: Session[];

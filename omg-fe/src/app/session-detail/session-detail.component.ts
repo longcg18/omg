@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { MessageService } from 'primeng/api';
+import { ConfirmEventType, ConfirmationService, MessageService } from 'primeng/api';
 import { SessionService } from 'src/service/sessionService';
 import { Item } from '../item/item';
 import { User } from '../user/user';
@@ -7,11 +7,14 @@ import { Session } from '../session/session';
 import { ItemService } from 'src/service/itemService';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { ActivatedRoute, Route, Router } from '@angular/router';
+import { UserService } from 'src/service/userService';
+import { TransactionService } from 'src/service/transactionService';
 
 @Component({
   selector: 'app-session-detail',
   templateUrl: './session-detail.component.html',
-  styleUrls: ['./session-detail.component.css']
+  styleUrls: ['./session-detail.component.css'],
+  providers:[ConfirmationService]
 })
 export class SessionDetailComponent implements OnInit{
 
@@ -39,13 +42,19 @@ export class SessionDetailComponent implements OnInit{
   message!: string;
   timeNote!: string;
   
+  buyButtonDisabled = false;
+  setPriceButtonDisabled = false;
   onFocus: boolean = true;
+  notifications!: Set<string>;
 
   constructor(
     private sessionService: SessionService, 
     private messageService: MessageService,
     private itemService: ItemService,
+    private userService: UserService,
     private route: ActivatedRoute,
+    private confirmService: ConfirmationService,
+    private transactionService: TransactionService,
     private router: Router) {
       this.route.params.subscribe(params => {
         this.sessionId = params['sessionId'];
@@ -53,11 +62,13 @@ export class SessionDetailComponent implements OnInit{
     }
 
   ngOnInit(): void {
-    console.log(DashboardComponent.currentDashboard);
+
+    this.notifications = new Set<string>();
     this.sessionService.getOne(this.sessionId).subscribe((res: any) => {
       this.session = res;
       this.item = this.session.item;
 
+      
       this.itemService.getOne(this.item.id).subscribe((item: any) => {
         if (item.image) {
           var itemImage = new Image();
@@ -84,7 +95,8 @@ export class SessionDetailComponent implements OnInit{
         this.winnerInfo = 'Chưa rõ';
       }
     })
-
+    this.buyButtonDisabled = true;
+    this.setPriceButtonDisabled = true;
 
     setInterval(() => {
       this.updateTime();
@@ -95,36 +107,37 @@ export class SessionDetailComponent implements OnInit{
     this.currentTime = new Date();
     let diffTime = 0;
     let notify = "";
+    //console.log(this.startTime);
     
-    // clock configure 
     if (this.currentTime.getTime() < this.startTime.getTime() && 
     this.currentTime.getTime() - this.startTime.getTime() < 0) {
       diffTime = this.startTime.getTime() - this.currentTime.getTime();
       notify = "Chưa bắt đầu ";
-      //this.buttonDisabled = true;
+      this.buyButtonDisabled = true;
+      this.setPriceButtonDisabled = true;
       this.status = "upcoming";
     } else if (this.currentTime.getTime() > this.startTime.getTime() 
       && this.currentTime.getTime() < this.closeTime.getTime() && 
       this.closeTime.getTime() - this.currentTime.getTime() > 0) {
         notify = "Đang diễn ra ";
-        // this.likeButtonDisabled = false;
-        // this.buttonDisabled = false;
+        this.buyButtonDisabled = false;
+        this.setPriceButtonDisabled = false;
         diffTime = this.closeTime.getTime() - this.currentTime.getTime();
         this.status = "opening"
     } else {
       notify = "Đã kết thúc";
       diffTime = this.currentTime.getTime() - this.closeTime.getTime();
-      // this.buttonDisabled = true;
-      // this.likeButtonDisabled = true;
+      this.buyButtonDisabled = true;
+      this.setPriceButtonDisabled = true;
       this.status = "closed";
     }
 
     this.sessionService.autoUpdateSession().subscribe((res: any) => {
       this.currentPrice = res.currentPrice;
       this.winner = res.winner;
-      this.winnerInfo = res.winner.name;
-
+      this.winnerInfo = this.winner.name;
       this.closeTime = new Date(res.closeTime);
+      this.notifications.add("Người dùng " + this.winner.name + " vừa tăng giá lên " + this.currentPrice + "USD")
     })
     const hours = Math.floor(diffTime / 3600000);
     const minutes = Math.floor((diffTime % 3600000) / 60000);
@@ -147,5 +160,89 @@ export class SessionDetailComponent implements OnInit{
 
   getCurrentDashboard() {
     return DashboardComponent.currentDashboard;
+  }
+
+  setPrice() {
+    this.confirmService.confirm({
+      message: 'Bạn muốn tăng giá sản phẩm?',
+      header: 'Đặt giá',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.currentPrice += this.stepPrice;
+        this.session.currentPrice = this.currentPrice;
+        this.session.winner = <User>this.userService.getSigninUser();
+        this.session.status = this.status;
+        var req: any = {
+          id: this.sessionId,
+          currentPrice: this.currentPrice,
+          winner: this.session.winner,
+          status: this.session.status,
+          startTime: this.session.startTime,
+          closeTime: this.session.closeTime
+        }
+        this.sessionService.saveOne(req).subscribe((res:any) => {
+          this.currentPrice = res.currentPrice;
+          this.winner = res.winner;
+          this.transactionService.createTransaction({
+            money: this.currentPrice,
+            user: this.userService.getSigninUser(),
+            session: this.session
+          })
+        });
+      },
+      reject: (type: ConfirmEventType) => {
+        switch (type) {
+          case ConfirmEventType.REJECT:
+              this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected' });
+              break;
+          case ConfirmEventType.CANCEL:
+              this.messageService.add({ severity: 'warn', summary: 'Cancelled', detail: 'You have cancelled' });
+              break;
+        }
+      }
+
+    })
+  }
+
+  buyButtonClicked() {
+    this.confirmService.confirm({
+      message: 'Bạn muốn mua sản phẩm với giá tối đa chứ?',
+      header: 'Mua sản phẩm',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.setPriceButtonDisabled = true;
+
+        this.session.closeTime = this.currentTime.toISOString();
+        this.session.winner = <User>this.userService.getSigninUser();
+        this.session.status = "closed";
+        this.session.currentPrice = this.session.reversePrice;
+        this.currentPrice = this.reversePrice;
+        this.winnerInfo = this.session.winner.name;
+
+        var req: any = {
+          id: this.sessionId,
+          currentPrice: this.currentPrice,
+          winner: this.session.winner,
+          status: this.session.status,
+          startTime: this.session.startTime,
+          closeTime: this.session.closeTime
+        }
+
+        this.sessionService.buyReversePrice(req).subscribe((res:any) => {
+          this.winner = res.winner;
+          this.winnerInfo = res.winner.name;
+        });
+      },
+      reject: (type: ConfirmEventType) => {
+        switch (type) {
+          case ConfirmEventType.REJECT:
+              this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected' });
+              break;
+          case ConfirmEventType.CANCEL:
+              this.messageService.add({ severity: 'warn', summary: 'Cancelled', detail: 'You have cancelled' });
+              break;
+        }
+      }
+    })
   }
 }

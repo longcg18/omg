@@ -35,7 +35,7 @@ import { HomePageComponent } from './home-page/home-page.component';
 import { DialogModule } from 'primeng/dialog';
 import { FileUploadModule } from 'primeng/fileupload';
 import { SessionDetailComponent } from './session-detail/session-detail.component';
-
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
 
@@ -77,7 +77,8 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     CheckboxModule,
     RadioButtonModule,
     DialogModule,
-    FileUploadModule
+    FileUploadModule,
+    ConfirmDialogModule
   ],
   providers: [
     MessageService,

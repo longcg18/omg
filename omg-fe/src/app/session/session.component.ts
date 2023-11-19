@@ -71,20 +71,18 @@ export class SessionComponent implements OnInit {
       this.stepPrice = this.session.stepPrice;
       this.reversePrice = this.session.reversePrice;
       this.winner = this.session.winner;
-          
+      
       this.status = this.session.status;
       if(this.session.winner != null) {
         this.winnerInfo = this.session.winner.name;
       } else {
         this.winnerInfo = 'Chưa rõ';
       }
+      console.log(this.winnerInfo);
     })
-
-    //this.updateTime();
 
     setInterval(() => {
       this.updateTime();
-      //this.updateSession();
     }, 1000);
   }
 
@@ -165,7 +163,6 @@ export class SessionComponent implements OnInit {
     this.likeButtonDisabled = true;
 
     this.session.closeTime = this.currentTime.toISOString();
-    //console.log(this.session.closeTime);
     this.session.winner = <User>this.userService.getSigninUser();
     this.session.status = "closed";
     this.session.currentPrice = this.session.reversePrice;
@@ -181,6 +178,7 @@ export class SessionComponent implements OnInit {
   expandButtonClicked() {
     DashboardComponent.currentDashboard = "expandSession";
     this.router.navigate(['/room', this.sessionId]);
+    console.log(this.sessionId);
   }
 
 
