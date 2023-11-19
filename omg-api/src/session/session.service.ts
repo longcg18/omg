@@ -70,7 +70,10 @@ export class SessionService {
           console.log('Existing', _id,  existingSession);
           if (existingSession) {
               await this.sessionsRepo.update(_id, updatedFields);
-              const updatedSession = await this.sessionsRepo.findOneBy({id: _id});
+              const updatedSession = await this.sessionsRepo.createQueryBuilder("session")
+                    .leftJoin("session.winner", "user")
+                    .select(["session","user"])
+                    .where("session.id=:id", {id: _id}).getOne();
               return updatedSession;
           }
 

@@ -13,8 +13,6 @@ import {
 //import { Item } from '../src/item/item.entity';
 import { OnModuleInit } from '@nestjs/common';
 import { from, map } from 'rxjs';
-import { ItemService } from './item/item.service';
-import { Item } from './item/item.entity';
 import { SessionService } from './session/session.service';
   @WebSocketGateway({
     cors: {
@@ -38,17 +36,9 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 
   @SubscribeMessage('setPrice')
   async handleSendMessage(client: Socket, payload: any): Promise<void> {
-    //await this.itemService.update(payload);
-    
-    //let updateItem = payload.item;
     let updateSession = payload.session;
-    
-    await this.sessionService.updateSessionInDatabase(updateSession.id, payload.session)
-    this.server.emit('updatedPrice', updateSession);
-
-    //await this.itemService.updateItemInDatabase(updateItem.id, { likes:updateItem.likes });
-
-    //console.log(payload, updateItem);
+    var updatedSession = await this.sessionService.updateSessionInDatabase(updateSession.id, payload.session)
+    this.server.emit('updatedPrice', updatedSession);
   }
 
 
@@ -68,7 +58,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 
   async handleDisconnect(client: Socket) {
     console.log(`Disconnected: ${client.id}`);
-    //Do stuffs
   }
 
   async handleConnection(client: Socket, ...args: any[]) {
