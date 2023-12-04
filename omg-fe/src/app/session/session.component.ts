@@ -50,6 +50,7 @@ export class SessionComponent implements OnInit {
 
   winner!: User;
   winnerInfo!: string;
+  ownerName!: string;
 
   constructor(
     private sessionService: SessionService,
@@ -72,6 +73,11 @@ export class SessionComponent implements OnInit {
       this.reversePrice = this.session.reversePrice;
       this.winner = this.session.winner;
       
+      this.itemService.getOne(this.item.id).subscribe((item: any) => {
+        this.ownerName = item.owner.name;
+      })
+
+
       this.status = this.session.status;
       if(this.session.winner != null) {
         this.winnerInfo = this.session.winner.name;

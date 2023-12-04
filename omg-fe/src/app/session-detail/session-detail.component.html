@@ -1,6 +1,6 @@
 <div class="surface-ground px-2 py-3 md:px-4 lg:px-4">
     <div class="grid nested-grid">
-        <div class="col-9">
+        <div class="col-8">
             <div class="grid">
                 <div class="col-12 lg:col-12">
                     <div class="text-center">
@@ -26,7 +26,11 @@
                                 </li>
                                 <li class="flex align-items-center mb-3">
                                     <i class="pi pi-check-circle text-green-500 mr-2"></i>
-                                    <span class="text-900">Giá tiếp theo ${{currentPrice + stepPrice}}</span>
+                                    <span class="text-900">Giá tiếp theo {{nextPrice}}</span>
+                                </li>
+                                <li class="flex align-items-center mb-3">
+                                    <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                                    <span class="text-900">Cạnh tranh sòng phẳng</span>
                                 </li>
                             </ul>
                             <hr class="mb-3 mx-0 border-top-1 border-none surface-border mt-auto" />
@@ -55,6 +59,10 @@
                                     <i class="pi pi-check-circle text-green-500 mr-2"></i>
                                     <span class="text-900">Freeship</span>
                                 </li>
+                                <li class="flex align-items-center mb-3">
+                                    <i class="pi pi-info-circle text-green-500 mr-2"></i>
+                                    <span class="text-900">Khả dụng nếu giá hiện tại không quá 30%</span>
+                                </li>
                             </ul>
                             <hr class="mb-3 mx-0 border-top-1 border-none surface-border" />
                             <button pButton pRipple label="Mua thẳng" (click)="buyButtonClicked()" [disabled]="buyButtonDisabled"  class="p-3 w-full"></button>
@@ -65,8 +73,10 @@
             </div>
         </div>
         
-        <div class="col-3">
+        <div class="col-4">
             <div class="shadow-2 p-3 surface-card" style="border-radius: 6px">
+                <div class="text-900"> Xin chào {{this.user.name}}</div>
+                <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
                 <div class="text-blue-500 text-center font-bold text-4xl mb-2">{{sessionDuration}}</div>
                 <div class="text-600 text-center">{{timeNote}}</div>
                 <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
@@ -76,6 +86,10 @@
                 </div>
                 <hr class="my-3 mx-0 border-top-1 border-none surface-border" />
                 <ul class="list-none p-0 m-0 flex-grow-1">
+                    <li class="flex align-items-center mb-3">
+                        <i class="pi pi-info-circle text-green-500 mr-2"></i>
+                        <span class="text-900">Đăng bán bởi {{this.ownerName}}</span>
+                    </li>
                     <li class="flex align-items-center mb-3">
                         <i class="pi pi-info-circle text-green-500 mr-2"></i>
                         <span class="text-900">Khi hết thời gian, người thắng sẽ là {{this.winnerInfo}}</span>
@@ -94,4 +108,17 @@
 
 <div class="card flex justify-content-center gap-2">
     <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
+</div>
+
+
+<div *ngIf="closeSessionInfo">
+    <p-dialog header="Đã kết thúc" [visible]="true" [modal]="true" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false">
+        <p class="m-0">
+            Người chiến thắng: {{this.winnerInfo}}
+        </p>
+        <br>
+
+        <p-button label="Rời phòng" (click)="quitSession()" class="p-1 w-full p-button-outlined"></p-button>
+
+    </p-dialog>
 </div>

@@ -42,8 +42,11 @@ export class DashboardComponent implements OnInit {
     userList!: User[];
     image!: File;
 
+    orderDetail!: string;
+
     //@ViewChild('itemImage') itemImage!: File;
 
+    visibleOrderDetail: boolean = false;
     filteredSessionList: Session[] = [];
 
     currentTime!: Date;
@@ -270,6 +273,8 @@ export class DashboardComponent implements OnInit {
             itemSelector: new FormControl<Item> (this.selectedItem)
         })
 
+        this.showMyItem()
+
         setInterval(()=>{
         this.updateTime()
         }, 1000);
@@ -381,6 +386,10 @@ export class DashboardComponent implements OnInit {
             severity: 'success',
             summary: 'Tạo vật phẩm mới!'
         })
+
+
+        DashboardComponent.currentDashboard = 'myItems';
+
     }
 
     imageOnSelect(event: any) {
@@ -402,7 +411,6 @@ export class DashboardComponent implements OnInit {
 
     createSession() {
         var newSession: any = {
-            id: 0,
             startTime: this.newSession.startTime,
             closeTime: this.newSession.closeTime,
             initiatePrice: this.newSession.initiatePrice,
@@ -411,22 +419,34 @@ export class DashboardComponent implements OnInit {
             currentPrice: this.newSession.initiatePrice,
             item: this.formGroup.get('itemSelector')?.value,
         }
-        this.sessionService.createOne(newSession);
+
         newSession.item.status = "not_available";
-        this.itemService.saveOne(newSession.item).subscribe();
+
+        var updateItme: any = {
+            id: newSession.item.id,
+            status: "not_available"
+        }
+        this.itemService.saveOne(updateItme).subscribe((res: any) => {
+
+        });
+
+        this.sessionService.createOne(newSession);
+        //console.log(newSession.item);
+        //this.itemService.saveOne(newSession.item);
         window.location.reload();
         this.messageService.add({
             severity: 'success',
             summary: 'Tạo phiên đấu giá mới!'
         })
+        this.showRunningSession();
     }
 
     cancelCreateSession() {
-        DashboardComponent.currentDashboard = null;
+        this.showRunningSession()
     }
 
     cancelCreateItem() {
-        DashboardComponent.currentDashboard = null;
+        DashboardComponent.currentDashboard = 'myItems';
     }
 
     filterResults(text: string) {
@@ -437,8 +457,10 @@ export class DashboardComponent implements OnInit {
             session => session.item.plateNumber.toLowerCase().includes(text.toLowerCase())
         );
     }
-    showRunningSession () {
+
+    showRunningSession() {
         DashboardComponent.currentDashboard = 'runningSession';
+
         this.sessionService.getAllSessions().subscribe((res: any) => {
             this.sessionList = res;
             this.filteredSessionList = this.sessionList;
@@ -609,5 +631,35 @@ export class DashboardComponent implements OnInit {
 
     public getCurrentDashboard() {
         return DashboardComponent.currentDashboard;
+    }
+
+    showOrderDetail(sessionId: number) {
+        this.visibleOrderDetail = true;
+        var item_t: any;
+        var user_t: any;
+        var detail: any;
+        this.sessionService.getOne(sessionId).subscribe((res: any) => {
+            this.itemService.getOne(res.item.id).subscribe((item: any) => {
+                item_t = item;
+                this.userService.getOne(item_t.ownerId).subscribe((user: any) => {
+                    user_t = user;
+                    detail = {
+                        sessionId: sessionId,
+                        price: res.currentPrice,
+                        owner: user_t.name,
+                        time: new Date(res.closeTime)
+                    }
+                    this.orderDetail = "Người bán: <b>" + detail.owner + '</b> <br>';
+                    this.orderDetail += "Người mua: <b>" + this.user.name + '</b><br>';
+                    this.orderDetail += "Giá tiền: <b>" + detail.price + '</b><br>';
+                    this.orderDetail += "Thời gian: <b>" + detail.time + '</b><br>';
+                    this.orderDetail += "Thanh toán: Thanh toán khi nhận hàng";
+                    console.log(this.orderDetail);
+
+                })
+            })
+
+
+        })
     }
 }

@@ -23,6 +23,11 @@ export class SessionDetailComponent implements OnInit{
   plateNumber!: string;
   item!: Item;
 
+  user: any = this.userService.getSigninUser();
+
+
+  closeSessionInfo: boolean = false;
+
   closeTime!: Date;
   startTime!: Date;
 
@@ -37,6 +42,9 @@ export class SessionDetailComponent implements OnInit{
 
   status!: string;
   winner!: User;
+  owner!: User;
+  ownerName!: string;
+  ownerId!: number;
   winnerInfo!: string;
 
   message!: string;
@@ -46,6 +54,8 @@ export class SessionDetailComponent implements OnInit{
   setPriceButtonDisabled = false;
   onFocus: boolean = true;
   notifications!: Set<string>;
+
+  nextPrice!: string;
 
   constructor(
     private sessionService: SessionService, 
@@ -77,8 +87,21 @@ export class SessionDetailComponent implements OnInit{
         } else {
           this.imageSrc = "https://primefaces.org/cdn/primeng/images/usercard.png";
         }
+        // console.log(this.item);
+        this.userService.getOne(item.ownerId).subscribe((res: any) => {
+          this.owner = res;
+          this.ownerName = this.owner.name;
+          this.ownerId = this.owner.id;
+        });
+
 
       })
+
+      if (this.user.id == this.ownerId) {
+        this.buyButtonDisabled = true;
+        this.setPriceButtonDisabled = true;
+      }
+
       this.currentPrice = this.session.currentPrice;
       this.closeTime = new Date (this.session.closeTime);
       
@@ -86,8 +109,14 @@ export class SessionDetailComponent implements OnInit{
       this.plateNumber = this.session.item.plateNumber;
       this.stepPrice = this.session.stepPrice;
       this.reversePrice = this.session.reversePrice;
+      if (this.currentPrice == this.reversePrice) {
+        this.nextPrice = "Không khả dụng"
+      } else {
+        this.nextPrice = "$" + (this.currentPrice + this.stepPrice).toString(); 
+      }
       this.winner = this.session.winner;
           
+
       this.status = this.session.status;
       if(this.session.winner != null) {
         this.winnerInfo = this.session.winner.name;
@@ -121,23 +150,52 @@ export class SessionDetailComponent implements OnInit{
       this.closeTime.getTime() - this.currentTime.getTime() > 0) {
         notify = "Đang diễn ra ";
         this.buyButtonDisabled = false;
-        this.setPriceButtonDisabled = false;
+        if (this.user.id == this.ownerId) {
+          this.buyButtonDisabled = true;
+          this.setPriceButtonDisabled = true;
+        } else {
+          this.setPriceButtonDisabled = false;
+        }
+        if (this.currentPrice > this.reversePrice / 3) {
+          this.buyButtonDisabled = true;
+        }
         diffTime = this.closeTime.getTime() - this.currentTime.getTime();
         this.status = "opening"
     } else {
+      this.closeSessionInfo = true;
+
+
       notify = "Đã kết thúc";
       diffTime = this.currentTime.getTime() - this.closeTime.getTime();
       this.buyButtonDisabled = true;
       this.setPriceButtonDisabled = true;
       this.status = "closed";
-    }
+    } 
 
+    // auto update session by seconds
     this.sessionService.autoUpdateSession().subscribe((res: any) => {
       this.currentPrice = res.currentPrice;
       this.winner = res.winner;
       this.winnerInfo = this.winner.name;
       this.closeTime = new Date(res.closeTime);
-      this.notifications.add("Người dùng " + this.winner.name + " vừa tăng giá lên " + this.currentPrice + "USD")
+      if (this.user.id == this.ownerId) {
+        this.buyButtonDisabled = true;
+        this.setPriceButtonDisabled = true;
+      }
+      if (this.currentPrice > res.reversePrice / 3) {
+        this.buyButtonDisabled = true;
+      }
+      if (this.reversePrice == res.currentPrice) {
+        this.notifications.add("Người dùng " + this.winner.name + " đã mua với giá " + this.currentPrice + "USD")
+      } else {
+        this.notifications.add("Người dùng " + this.winner.name + " vừa tăng giá lên " + this.currentPrice + "USD")
+      }
+
+      if (this.currentPrice == this.reversePrice) {
+        this.nextPrice = "Không khả dụng"
+      } else {
+        this.nextPrice = "$" + (this.currentPrice + this.stepPrice).toString(); 
+      }
     })
     const hours = Math.floor(diffTime / 3600000);
     const minutes = Math.floor((diffTime % 3600000) / 60000);
@@ -193,10 +251,10 @@ export class SessionDetailComponent implements OnInit{
       reject: (type: ConfirmEventType) => {
         switch (type) {
           case ConfirmEventType.REJECT:
-              this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected' });
+              this.messageService.add({ severity: 'error', summary: 'Từ chối', detail: 'Bạn đã từ chối' });
               break;
           case ConfirmEventType.CANCEL:
-              this.messageService.add({ severity: 'warn', summary: 'Cancelled', detail: 'You have cancelled' });
+              this.messageService.add({ severity: 'warn', summary: 'Huỷ', detail: 'Bạn đã huỷ' });
               break;
         }
       }
@@ -231,15 +289,21 @@ export class SessionDetailComponent implements OnInit{
         this.sessionService.buyReversePrice(req).subscribe((res:any) => {
           this.winner = res.winner;
           this.winnerInfo = res.winner.name;
+
+          this.transactionService.createTransaction({
+            money: this.currentPrice,
+            user: this.userService.getSigninUser(),
+            session: this.session
+          })
         });
       },
       reject: (type: ConfirmEventType) => {
         switch (type) {
           case ConfirmEventType.REJECT:
-              this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected' });
+              this.messageService.add({ severity: 'error', summary: 'Từ chối', detail: 'Bạn đã từ chối' });
               break;
           case ConfirmEventType.CANCEL:
-              this.messageService.add({ severity: 'warn', summary: 'Cancelled', detail: 'You have cancelled' });
+              this.messageService.add({ severity: 'warn', summary: 'Huỷ', detail: 'Bạn đã huỷ' });
               break;
         }
       }

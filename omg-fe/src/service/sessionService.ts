@@ -19,7 +19,7 @@ const saveOne = 'http://localhost:3000/session/';
 export class SessionService {
     constructor(private httpClient: HttpClient, public socket: Socket) {}
 
-    createOne(session: Session) {
+    createOne(session: any) {
         console.log(session);
         return this.httpClient.post(saveOne, session).subscribe();
     }

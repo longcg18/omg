@@ -34,7 +34,6 @@ export class ItemService {
     }
 
     saveOne(item: Item): Observable<Item> {
-
         return this.httpClient.put<Item>(saveOne, item).pipe();
         //return this.socket.fromEvent<Item>('updated').pipe();
     }

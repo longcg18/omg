@@ -107,13 +107,13 @@
 <div *ngIf="getCurrentDashboard()==='createSession'" class="card-like">
   <form>
     <p>
-     Giá mua thẳng <input type="number" pInputNumber placeholder="Giá mua thẳng" [(ngModel)]="newSession.reversePrice" name="reversePrice"> triệu
+     Giá mua thẳng <input type="number" pInputNumber placeholder="Giá mua thẳng" [(ngModel)]="newSession.reversePrice" name="reversePrice"> USD
     </p>
     <p>
-     Giá khởi điểm <input type="number" pInputNumber placeholder="Giá khởi điểm" [(ngModel)]="newSession.initiatePrice" name="initPrice"> triệu
+     Giá khởi điểm <input type="number" pInputNumber placeholder="Giá khởi điểm" [(ngModel)]="newSession.initiatePrice" name="initPrice"> USD
     </p>
     <p>
-     Bước nhảy giá <input type="number" pInputNumber placeholder="Bước nhảy giá" [(ngModel)]="newSession.stepPrice" name="stepPrice"> triệu
+     Bước nhảy giá <input type="number" pInputNumber placeholder="Bước nhảy giá" [(ngModel)]="newSession.stepPrice" name="stepPrice"> USD
     </p>
     <p>
      Thời điểm bắt đầu <p-calendar [(ngModel)]="newSession.startTime" name="StartTimePicker" [showTime]="true" [showSeconds]="true"></p-calendar>
@@ -130,8 +130,9 @@
           </ng-template>
       </p-dropdown>
   </form>
-  
+  <br>
     <p-button type="submit" (click)="createSession()">Xác nhận</p-button>
+    &nbsp;
     <p-button type="submit" (click)="cancelCreateSession()">Huỷ</p-button>
 
   </form>
@@ -184,6 +185,7 @@
             <th>Số tiền</th>
             <th>Biển số</th>
             <th>Thời gian</th>
+            <th>UserId</th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-transaction>
@@ -192,6 +194,7 @@
             <td>{{ transaction.money }}</td>
             <td>{{ transaction.session.item.plateNumber }}</td>
             <td>{{ transaction.created_at }}</td>
+            <td>{{ transaction.user.id}}</td>
         </tr>
     </ng-template>
     <ng-template pTemplate="summary"> Tổng số tiền đã đặt: {{summary}} </ng-template>
@@ -207,6 +210,7 @@
             <th>Số tiền</th>
             <th>Biển số</th>
             <th>Trạng thái</th>
+            <th>Chi tiết</th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-order>
@@ -215,11 +219,16 @@
             <td>{{ order.currentPrice }}</td>
             <td>{{ order.item.plateNumber }}</td>
             <td>{{ order.status }}</td>
+            <td><p-button (click)="showOrderDetail(order.id)" icon="pi pi-external-link" label="Chi tiết"></p-button></td>
         </tr>
     </ng-template>
     <ng-template pTemplate="summery"> Tổng số tiền đã đặt: {{total}} </ng-template>
 </p-table>
 </div>
+
+<p-dialog header="Chi tiết đơn hàng" [(visible)]="visibleOrderDetail" [modal]="true" [style]="{ width: '70vw' }" [draggable]="false" [resizable]="false">
+    <div [innerHTML]="orderDetail"></div>
+</p-dialog>
 
 <div class="card" *ngIf="getCurrentDashboard()==='systemOrders'">
   <p-table [value]="systemOrderList" styleClass="p-datatable-gridlines" [tableStyle]="{ 'min-width': '50rem' }">
