@@ -31,7 +31,11 @@ import { InputTextModule } from 'primeng/inputtext';
 import { CheckboxModule } from 'primeng/checkbox';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputNumberModule } from 'primeng/inputnumber';
-
+import { HomePageComponent } from './home-page/home-page.component';
+import { DialogModule } from 'primeng/dialog';
+import { FileUploadModule } from 'primeng/fileupload';
+import { SessionDetailComponent } from './session-detail/session-detail.component';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
 
@@ -43,7 +47,9 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     SessionComponent,
     UserComponent,
     TransactionComponent,
-    OrderComponent
+    OrderComponent,
+    HomePageComponent,
+    SessionDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -69,7 +75,10 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     ToastModule,
     InputTextModule,
     CheckboxModule,
-    RadioButtonModule
+    RadioButtonModule,
+    DialogModule,
+    FileUploadModule,
+    ConfirmDialogModule
   ],
   providers: [
     MessageService,

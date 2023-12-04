@@ -1,6 +1,8 @@
-<p-card header="{{plateNumber}}" [style]="{ width: '270px' , border: '1px solid black', margin: '10px'}"><ng-template pTemplate="header">
-    <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png" />
-</ng-template>
+<p-card header="{{plateNumber}}" [style]="{ width: '270px' , border: '1px solid gray', margin: '10px'}">
+    <ng-template pTemplate="header" id="image-container">
+        <img alt="Card" id="image-container" [src]="imageSrc" height="150" style="object-fit: contain;">
+        <!--img alt="Card" id="image" src="https://primefaces.org/cdn/primeng/images/usercard.png" /-->
+    </ng-template>
 <p>
     Biển số: {{plateNumber}} <br>
     Hãng xe: {{vendor}} <br>
@@ -15,7 +17,30 @@
 </ng-template>
 </p-card>
 
-<div class="edit-item" *ngIf="editing">
+<div class="flex align-content-center flex-wrap" *ngIf="editing">
+    <p-dialog header="Chỉnh sửa thông tin vật phẩm" [visible]="true" [modal]="true" [style]="{width: '30vw'}">
+        <form [formGroup]="form" class="" id="item-editor-form">
+            <div class="form-group block">
+                <label htmlFor="plateNumber">Biển số xe</label> <br>
+                <input type="text" class="w-full" pInputText name="plateNumber" id="plateNumber" formControlName="plateNumber"/> <br> <br>
+            </div>
+            <div class="form-group block">
+                <label htmlFor="vendor">Hãng xe</label> <br>
+                <input type="text" class="w-full" pInputText name="vendor" id="vendor" formControlName="vendor"/> <br><br>
+            </div>
+            <div class="form-group block">
+                <label htmlFor="type">Loại xe</label> <br>
+                <input type="text" class="w-full" pInputText name="type" id="type" formControlName="type"/> <br> <br>
+            </div>
+            
+            <p-button label="Xác nhận" (click)="onSubmit()"></p-button> 
+            &nbsp;
+            <p-button label="Huỷ" (click)="onCancel()"></p-button>
+        </form>
+    </p-dialog>
+        
+</div>
+<!--div class="edit-item" *ngIf="editing">
     <h3 class="form-title">Chỉnh sửa thông tin vật phẩm</h3>
     <form [formGroup]="form" class="card flex justify-content-center" id="item-editor-form">
         <div class="flex flex-column gap-2">
@@ -37,4 +62,4 @@
         <p-button label="Huỷ" (click)="onCancel()"></p-button>
     </form>
 
-</div>
+</div-->

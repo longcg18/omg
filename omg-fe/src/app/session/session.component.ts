@@ -9,6 +9,8 @@ import { UserService } from 'src/service/userService';
 import { User } from '../user/user';
 import { OrderService } from 'src/service/orderService';
 import { ItemService } from 'src/service/itemService';
+import { DashboardComponent } from '../dashboard/dashboard.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-session',
@@ -28,7 +30,7 @@ export class SessionComponent implements OnInit {
   currentPrice!: number;
   public session!: Session;
   item!: Item;
-
+  onFocus: boolean = false;
   plateNumber!: string;
 
   buttonDisabled: boolean = false;
@@ -48,13 +50,15 @@ export class SessionComponent implements OnInit {
 
   winner!: User;
   winnerInfo!: string;
+  ownerName!: string;
 
   constructor(
     private sessionService: SessionService,
     private transactionService: TransactionService,
     private userService: UserService,
     private itemService: ItemService,
-    private orderService: OrderService
+    private orderService: OrderService,
+    private router: Router
   ) {}
   ngOnInit(): void {
     this.sessionService.getOne(this.sessionId).subscribe((res:any) => {
@@ -68,20 +72,23 @@ export class SessionComponent implements OnInit {
       this.stepPrice = this.session.stepPrice;
       this.reversePrice = this.session.reversePrice;
       this.winner = this.session.winner;
-          
+      
+      this.itemService.getOne(this.item.id).subscribe((item: any) => {
+        this.ownerName = item.owner.name;
+      })
+
+
       this.status = this.session.status;
       if(this.session.winner != null) {
         this.winnerInfo = this.session.winner.name;
       } else {
         this.winnerInfo = 'Chưa rõ';
       }
+      console.log(this.winnerInfo);
     })
-
-    //this.updateTime();
 
     setInterval(() => {
       this.updateTime();
-      //this.updateSession();
     }, 1000);
   }
 
@@ -123,26 +130,28 @@ export class SessionComponent implements OnInit {
       notify = "Bắt đầu sau: ";
       this.buttonDisabled = true;
       this.status = "upcoming";
-  
-
     } else if (this.currentTime.getTime() > this.startTime.getTime() 
       && this.currentTime.getTime() < this.closeTime.getTime() && 
       this.closeTime.getTime() - this.currentTime.getTime() > 0) {
         notify = "Kết thúc sau: ";
         this.likeButtonDisabled = false;
+        this.buttonDisabled = false;
         diffTime = this.closeTime.getTime() - this.currentTime.getTime();
         this.status = "opening"
     } else {
       notify = "Đã kết thúc được: ";
       diffTime = this.currentTime.getTime() - this.closeTime.getTime();
       this.buttonDisabled = true;
-      this.status = "closed"
+      this.likeButtonDisabled = true;
+      this.status = "closed";
     }
 
     this.sessionService.autoUpdateSession().subscribe((res: any) => {
       this.currentPrice = res.currentPrice;
       this.winner = res.winner;
       this.winnerInfo = res.winner.name;
+
+      this.closeTime = new Date(res.closeTime);
     })
     const hours = Math.floor(diffTime / 3600000);
     const minutes = Math.floor((diffTime % 3600000) / 60000);
@@ -160,7 +169,6 @@ export class SessionComponent implements OnInit {
     this.likeButtonDisabled = true;
 
     this.session.closeTime = this.currentTime.toISOString();
-    //console.log(this.session.closeTime);
     this.session.winner = <User>this.userService.getSigninUser();
     this.session.status = "closed";
     this.session.currentPrice = this.session.reversePrice;
@@ -171,5 +179,21 @@ export class SessionComponent implements OnInit {
       this.winner = res.winner;
       this.winnerInfo = res.winner.name;
     });
+  }
+
+  expandButtonClicked() {
+    DashboardComponent.currentDashboard = "expandSession";
+    this.router.navigate(['/room', this.sessionId]);
+    console.log(this.sessionId);
+  }
+
+
+  public getCurrentDashboard() {
+    return DashboardComponent.currentDashboard;
+  }
+
+
+  getSessionId() {
+    return this.sessionId;
   }
 }

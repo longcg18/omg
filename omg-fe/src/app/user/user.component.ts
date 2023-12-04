@@ -90,7 +90,9 @@ export class UserComponent implements OnInit {
       address: [this.address, Validators.required],
       phone: [this.phone, Validators.required],
       birthday: [this.birthday, Validators.required],
-      id: [this.userId]
+      id: [this.userId],
+      username: [this.username],
+      email: [this.email]
     })
   }
 
@@ -152,7 +154,8 @@ export class UserComponent implements OnInit {
 
   onCancelProfile() {
     this.editing = false;
-
+    this.startButtonDisabled = false;
+    this.editButtonDisabled = false;
   }
 
   getBirthday(date: Date): string {

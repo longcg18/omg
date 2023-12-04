@@ -28,8 +28,29 @@ export class TransactionService {
           .getMany();
         return res; 
       }
+
       async create(transaction: Transaction): Promise<Transaction> {
-        return await this.transactionsRepo.save(transaction);
+        let money = transaction.money;
+        let userId = transaction.user.id;
+        let sessionId = transaction.session.id;
+
+        // console.log(money, userId, sessionId);
+        const existingTransaction = await this.transactionsRepo.createQueryBuilder("transaction")
+          .leftJoin("transaction.user", "user")
+          .leftJoin("transaction.session", "session")
+          .select(["transaction", "user", "session"])
+          .where("user.id=:id", {id: userId})
+          .andWhere("transaction.money=:money", {money: money})
+          .andWhere("session.id=:sid", {sid: sessionId})
+          .getOne();
+
+        // console.log("Existing Transaction: ", existingTransaction);
+        
+        if (existingTransaction) {
+          return existingTransaction;
+        } else {
+          return await this.transactionsRepo.save(transaction);
+        }
       }
     
       async update(hostpital : Transaction): Promise<UpdateResult> {

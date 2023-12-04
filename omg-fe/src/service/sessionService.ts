@@ -9,7 +9,6 @@ const httpOptions ={
     headers:new HttpHeaders({'Content-Type':'Application/json'})
 }
 
-
 const getOneSession = 'http://localhost:3000/session/';
 
 const saveOne = 'http://localhost:3000/session/';
@@ -20,7 +19,7 @@ const saveOne = 'http://localhost:3000/session/';
 export class SessionService {
     constructor(private httpClient: HttpClient, public socket: Socket) {}
 
-    createOne(session: Session) {
+    createOne(session: any) {
         console.log(session);
         return this.httpClient.post(saveOne, session).subscribe();
     }
@@ -33,9 +32,8 @@ export class SessionService {
         this.socket.emit('setPrice', {
             session
         });
+        //console.log(session);
         return this.socket.fromEvent<Session>('updatedPrice').pipe();
-
-        //return this.httpClient.put(saveOne, session).subscribe();
     }
 
     getAllSessionsByWinnerId(userId: any): Observable<Session[]> {
@@ -51,7 +49,10 @@ export class SessionService {
     }
 
     buyReversePrice(session: any): Observable<Session> {
-        return this.httpClient.put<Session>(saveOne, session).pipe();
+        this.socket.emit('setPrice', {
+            session
+        });
+        return this.socket.fromEvent<Session>('updatedPrice').pipe();
     }
 
     autoUpdateSession(): Observable<Session> {

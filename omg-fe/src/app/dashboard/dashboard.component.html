@@ -5,7 +5,7 @@
   <div class="card">
     <p-menubar [model]="menuItems">
         <ng-template pTemplate="start">
-            <img src="https://primefaces.org/cdn/primeng/images/primeng.svg" height="40" class="mr-2" />
+            <img src="assets/logo.png" height="40" class="mr-2" />
   
         </ng-template>
         <ng-template pTemplate="end">
@@ -24,7 +24,7 @@
   <div class="card">
     <p-menubar [model]="adminMenuItems">
         <ng-template pTemplate="start">
-            <img src="https://primefaces.org/cdn/primeng/images/primeng.svg" height="40" class="mr-2" />
+            <img src="assets/logo.png" height="40" class="mr-2" />
   
         </ng-template>
         <ng-template pTemplate="end">
@@ -43,7 +43,7 @@
 </ng-template>
 
 
-<div class="new-user" *ngIf="showNewUserForm">
+<div class="new-user" *ngIf="getCurrentDashboard()==='createUser'">
   <h3 class="form-title">Tạo người dùng mới</h3>
     <form [formGroup]="newUserForm" class="card flex justify-content-center" id="register-form">
         <div class="flex flex-column gap-2">
@@ -72,38 +72,9 @@
     </form>
 </div>
 
-<div class="edit-item" *ngIf="showProfile">
-  <h3 class="form-title">Chỉnh sửa thông tin cá nhân</h3>
-  <form [formGroup]="profileForm" class="card flex justify-content-center" id="item-editor-form">
-      <div class="flex flex-column gap-2">
-          <label htmlFor="name">Họ và tên</label> {{this.user.name}} <br>
-          <input type="text" *ngIf="editing" pInputText name="name" id="name" formControlName="name"/> 
-          <p></p>
-      </div>
-      <div class="form-group">
-          <label htmlFor="address">Địa chỉ</label> {{this.user.address}}<br>
-          <input type="text" *ngIf="editing" pInputText name="address" id="address" formControlName="address"/>
-          <p></p>
-      </div>
-      <div class="form-group">
-          <label htmlFor="type">Sinh nhật</label> {{this.user.birthday}} <br>
-          <p-calendar *ngIf="editing" formControlName="birthday"></p-calendar>
-          <!--input type="text" pInputText name="type" id="type" formControlName="type"/-->
-          <p></p>
-      </div>
-      <div class="form-group">
-        <label htmlFor="phone">Số điện thoại</label> {{this.user.phone}} <br>
-        <input type="text" *ngIf="editing" pInputText name="phone" id="phone" formControlName="phone"/>
-        <p></p>
-    </div>
-      <p-button label="Xác nhận" *ngIf="profileSubmitButton" (click)="onSubmitProfile()"></p-button>
-      <p-button label="Chỉnh sửa" *ngIf="profileEditButton" (click)="requestEditProfile()"></p-button>
-      <p-button label="Huỷ" (click)="onCancelProfile()"></p-button>
-  </form>
 
-</div>
 
-<div *ngIf="hasShowItemForm" class="card-like">
+<div *ngIf="getCurrentDashboard()==='createItem'" class="card-like">
   <form>
     <p>
       Biển số <input type="text" pInputText placeholder="00A0-00000" [(ngModel)]="newItem.plateNumber" name="plateNumber">
@@ -114,6 +85,18 @@
     <p>
       Loại phương tiện <input type="text" pInputText placeholder="Xe máy" [(ngModel)]="newItem.type" name="vendor">
     </p>
+
+    <!--p-fileUpload type="file" mode="basic" chooseLabel="Chọn ảnh" name="image" (change)="imageOnSelect($event)" (onUpload)="imageOnUpload($event)" accept="image/*"></p-fileUpload-->
+        
+    <div *ngIf="previewUrl" class="image-preview">
+      <img [src]="previewUrl" alt="Preview">
+    </div>
+    
+    <div class="custom-file">
+      <input type="file" id="image" (change)="onChangeFile($event)" name="image" class="custom-file-input">
+      <label for="image" class="custom-file-label">Chọn ảnh</label>
+    </div>
+    <br>
     <p-button type="submit" (click)="createItem()">Xác nhận</p-button>
     &nbsp;
     <p-button type="submit" (click)="cancelCreateItem()">Huỷ</p-button>
@@ -121,16 +104,16 @@
   </form>
 </div>
 
-<div *ngIf="hasShowSessionForm" class="card-like">
+<div *ngIf="getCurrentDashboard()==='createSession'" class="card-like">
   <form>
     <p>
-     Giá mua thẳng <input type="number" pInputNumber placeholder="Giá mua thẳng" [(ngModel)]="newSession.reversePrice" name="reversePrice"> triệu
+     Giá mua thẳng <input type="number" pInputNumber placeholder="Giá mua thẳng" [(ngModel)]="newSession.reversePrice" name="reversePrice"> USD
     </p>
     <p>
-     Giá khởi điểm <input type="number" pInputNumber placeholder="Giá khởi điểm" [(ngModel)]="newSession.initiatePrice" name="initPrice"> triệu
+     Giá khởi điểm <input type="number" pInputNumber placeholder="Giá khởi điểm" [(ngModel)]="newSession.initiatePrice" name="initPrice"> USD
     </p>
     <p>
-     Bước nhảy giá <input type="number" pInputNumber placeholder="Bước nhảy giá" [(ngModel)]="newSession.stepPrice" name="stepPrice"> triệu
+     Bước nhảy giá <input type="number" pInputNumber placeholder="Bước nhảy giá" [(ngModel)]="newSession.stepPrice" name="stepPrice"> USD
     </p>
     <p>
      Thời điểm bắt đầu <p-calendar [(ngModel)]="newSession.startTime" name="StartTimePicker" [showTime]="true" [showSeconds]="true"></p-calendar>
@@ -147,39 +130,53 @@
           </ng-template>
       </p-dropdown>
   </form>
-  
+  <br>
     <p-button type="submit" (click)="createSession()">Xác nhận</p-button>
+    &nbsp;
     <p-button type="submit" (click)="cancelCreateSession()">Huỷ</p-button>
 
   </form>
 </div>
-<div class="user-container" *ngIf="showUsers">
-  <div *ngFor="let user of userList; let i = index">
-    <app-user class="user" [userId]="user.id"></app-user>
-    <div *ngIf="i%4===3 || i=== userList.length - 1" class="clearfix"></div>
+<div class="" *ngIf="getCurrentDashboard()==='userManagement'">
+  <div class="justify-content-center">
+    <div class="user-container ">
+      <div *ngFor="let user of userList; let i = index">
+        <app-user class="user" [userId]="user.id"></app-user>
+      </div>
+    </div>
   </div>
 </div>
 
-<div *ngIf="showFilter" style="margin-top: 1%;">
-  <input type="text" pInputText placeholder="Tìm kiếm theo biển số" #filter>
+<div class="view-profile" *ngIf="getCurrentDashboard()==='myProfile'">
+  <app-user class="user" [userId]="this.user.id"></app-user>
+</div>
+
+
+<!--div *ngIf="getCurrentDashboard()==='runningSession'">
+
+</div-->
+
+<div *ngIf="getCurrentDashboard()==='runningSession'" style="margin-top: 1%;">
+  <input type="text" style="margin-left: 1%;" pInputText placeholder="Tìm kiếm theo biển số" #filter> &nbsp;
   <p-button class="primary" type="button" (click)="filterResults(filter.value)">Search</p-button>
-  <div class="session-container" *ngIf="showSession">
-    <div *ngFor="let session of filteredSessionList; let i = index">
+  <div class="session-container">
+    <div class="grid  w-full" *ngFor="let session of filteredSessionList; let i = index">
+      <div class="col-12">
         <app-session class="session" [sessionId]="session.id" ngDefaultControl="true"></app-session>
-        <div *ngIf="i%4 === 3 || i === filteredSessionList.length - 1" class="clearfix"></div>
+      </div>
     </div>
   </div>
 </div>
 
 
-<div class="item-container" *ngIf="showItem" id="item-container">
+<div class="item-container" *ngIf="getCurrentDashboard()==='myItems'" id="item-container">
   <div *ngFor="let item of itemList; let i = index">
     <app-item class="item" [itemId]="item.id"></app-item>
     <div *ngIf="i%4 === 3 || i === itemList.length - 1" class="clearfix"></div>
   </div>
 </div>
 
-<div class="card" *ngIf="showTransaction">
+<div class="card" *ngIf="getCurrentDashboard()==='myTransactions'">
   <p-table [value]="transactionList" styleClass="p-datatable-gridlines" [tableStyle]="{ 'min-width': '50rem' }">
     <ng-template pTemplate="caption"> Lịch sử giao dịch </ng-template>
     <ng-template pTemplate="header">
@@ -188,6 +185,7 @@
             <th>Số tiền</th>
             <th>Biển số</th>
             <th>Thời gian</th>
+            <th>UserId</th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-transaction>
@@ -196,13 +194,14 @@
             <td>{{ transaction.money }}</td>
             <td>{{ transaction.session.item.plateNumber }}</td>
             <td>{{ transaction.created_at }}</td>
+            <td>{{ transaction.user.id}}</td>
         </tr>
     </ng-template>
     <ng-template pTemplate="summary"> Tổng số tiền đã đặt: {{summary}} </ng-template>
 </p-table>
 </div>
 
-<div class="card" *ngIf="showOrder">
+<div class="card" *ngIf="getCurrentDashboard()==='myOrders'">
   <p-table [value]="orderList" styleClass="p-datatable-gridlines" [tableStyle]="{ 'min-width': '50rem' }">
     <ng-template pTemplate="caption"> Đơn hàng </ng-template>
     <ng-template pTemplate="header">
@@ -211,6 +210,7 @@
             <th>Số tiền</th>
             <th>Biển số</th>
             <th>Trạng thái</th>
+            <th>Chi tiết</th>
         </tr>
     </ng-template>
     <ng-template pTemplate="body" let-order>
@@ -219,13 +219,18 @@
             <td>{{ order.currentPrice }}</td>
             <td>{{ order.item.plateNumber }}</td>
             <td>{{ order.status }}</td>
+            <td><p-button (click)="showOrderDetail(order.id)" icon="pi pi-external-link" label="Chi tiết"></p-button></td>
         </tr>
     </ng-template>
     <ng-template pTemplate="summery"> Tổng số tiền đã đặt: {{total}} </ng-template>
 </p-table>
 </div>
 
-<div class="card" *ngIf="showSystemOrder">
+<p-dialog header="Chi tiết đơn hàng" [(visible)]="visibleOrderDetail" [modal]="true" [style]="{ width: '70vw' }" [draggable]="false" [resizable]="false">
+    <div [innerHTML]="orderDetail"></div>
+</p-dialog>
+
+<div class="card" *ngIf="getCurrentDashboard()==='systemOrders'">
   <p-table [value]="systemOrderList" styleClass="p-datatable-gridlines" [tableStyle]="{ 'min-width': '50rem' }">
     <ng-template pTemplate="caption"> Toàn bộ đơn hàng </ng-template>
     <ng-template pTemplate="header">

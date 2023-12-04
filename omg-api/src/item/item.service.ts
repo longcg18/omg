@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Item } from './item.entity';
 import { InjectRepository} from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 //import { SocketGateway } from 'src/socketGateway';
 
 @Injectable()
@@ -46,6 +46,7 @@ export class ItemService {
     }
 
     async create(item: Item): Promise<Item> {
+        console.log(item.image);
         return await this.itemRepo.save(item);
     }
 
@@ -68,5 +69,9 @@ export class ItemService {
             console.error('Error updating item:', error);
             throw new Error('Error updating item in the database');
             }
+        }
+
+    async delete(id: number): Promise<DeleteResult> {
+        return await this.itemRepo.delete(id);
         }
 }

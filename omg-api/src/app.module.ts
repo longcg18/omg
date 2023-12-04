@@ -19,7 +19,7 @@ import { AuthModule } from './auth/auth.module';
       port: 3307,
       username: 'root',
       password: '20021387',
-      database: 'omg',
+      database: 'omg_demo',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true
     }),

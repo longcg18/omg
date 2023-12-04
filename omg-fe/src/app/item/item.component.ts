@@ -30,7 +30,10 @@ export class ItemComponent implements OnInit{
   status!: string;
   startButtonDisabled: boolean = true;
   ownershipNumber!: string;
+  images!: File[];
 
+  imageSrc!: any;
+  imgDisplay!: any;
   ownerName!: string;
   constructor(
     private itemService: ItemService,
@@ -41,11 +44,24 @@ export class ItemComponent implements OnInit{
   ngOnInit(): void {
     this.itemService.getOne(this.itemId).subscribe((res: any) => {
 
+      console.log(res);
       this.item = res;
       this.plateNumber = this.item.plateNumber;
       this.vendor = this.item.vendor;
       this.type = this.item.type;
       this.status = this.item.status;
+      this.imgDisplay = res.image;
+
+      if (res.image) {
+        var raw = res.image;
+        var img = new Image();
+        img.src = 'data:image/jpeg;base64,' + raw;
+        this.imageSrc = img.src;
+      } else {
+        this.imageSrc = "https://primefaces.org/cdn/primeng/images/usercard.png";
+      }
+
+
       this.ownershipNumber = this.item.ownershipNumber;
       if (this.item.owner) {
         this.ownerName = this.item.owner.name;
@@ -57,10 +73,7 @@ export class ItemComponent implements OnInit{
         this.editButtonDisabled = false;
         this.startButtonDisabled = false;
       }
-      //this.closeTime = new Date (this.item.time);
     });
-
-    
   }
 
   likeButtonClicked() {
@@ -90,7 +103,6 @@ export class ItemComponent implements OnInit{
   }
 
   saveButtonClicked() {
-    //this.item.likes = this.likeCounter;
     this.itemService.saveOne(this.item).subscribe((res: any) => {
       this.likeCounter = res.likes;
       console.log(res.likes);
@@ -147,9 +159,9 @@ export class ItemComponent implements OnInit{
         this.messageService.add({
           severity: 'success',
           summary: 'Cập nhật thành công!',
-          detail: this.f['plateNumber'].value + '\n' 
+          detail: this.f['type'].value + '\n' 
           + this.f['vendor'].value + '\n'
-          + this.f['type'].value 
+          + this.f['plateNumber'].value 
         });
         this.editing = false;
         this.vendor = this.f['vendor'].value;

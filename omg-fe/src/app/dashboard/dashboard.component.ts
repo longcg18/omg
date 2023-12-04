@@ -1,4 +1,4 @@
-import { Component, OnInit, forwardRef } from '@angular/core';
+import { Component, OnInit, ViewChild, forwardRef } from '@angular/core';
 import { Item } from '../item/item';
 import { ItemService } from '../../service/itemService';
 import { MenuItem } from 'primeng/api';
@@ -13,7 +13,12 @@ import { Transaction } from '../transaction/transaction';
 import { OrderService } from 'src/service/orderService';
 import { Order } from '../order/order';
 import { MessageService } from 'primeng/api';
+import { FileUpload } from 'primeng/fileupload';
 
+interface UploadEvent {
+    originalEvent: Event;
+    files: File[];
+}
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -27,43 +32,32 @@ import { MessageService } from 'primeng/api';
   ]
 })
 export class DashboardComponent implements OnInit {
+    [x: string]: any;
+    uploadedFiles: any[] = [];
     itemList!: Item[]; 
     sessionList!: Session[];
     transactionList!: Transaction[];
     orderList!: Session[];
     systemOrderList!: Session[];
     userList!: User[];
+    image!: File;
 
+    orderDetail!: string;
+
+    //@ViewChild('itemImage') itemImage!: File;
+
+    visibleOrderDetail: boolean = false;
     filteredSessionList: Session[] = [];
 
     currentTime!: Date;
-
-
-
     menuItems!: MenuItem[];
     adminMenuItems!: MenuItem[];
 
-
-    hasShowItemForm: boolean = false;
-    hasShowSessionForm: boolean = false;
-
-    showFilter: boolean = false;
-    showNewUserForm: boolean = false;
-    showUsers: boolean = false;
-    showItem: boolean = false;
-    showSession: boolean = true;
-    showTransaction: boolean = false;
-    showOrder: boolean = false;
-    showSystemOrder: boolean = false;
-    showProfile: boolean = false;
-    editing: boolean = false;
-    profileSubmitButton: boolean = false;
-    profileEditButton: boolean = false;
+    public static currentDashboard: string | null = null;
 
     total: number = 0;
     summary: number = 0;
-
-    profileForm!: FormGroup;
+    previewUrl: string | null = null;
     newUserForm!: FormGroup;
 
     selectedItem!: Item;
@@ -279,25 +273,44 @@ export class DashboardComponent implements OnInit {
             itemSelector: new FormControl<Item> (this.selectedItem)
         })
 
+        this.showMyItem()
+
         setInterval(()=>{
         this.updateTime()
         }, 1000);
     }
 
     manageUser() {
-        this.showUsers = true;
-        this.showOrder = false;
-        this.showItem = false;
-        this.showSession = false;
-        this.showTransaction = false;
-        this.profileEditButton = false;
-        this.profileSubmitButton = false;
-        this.showSystemOrder = false;
-        this.showProfile = false;
+        DashboardComponent.currentDashboard = 'userManagement';
         this.userService.getAllUser().subscribe((res: any) => {
             this.userList = res;
         })
 
+    }
+
+    previewImage(file: File): void {
+        const reader = new FileReader();
+      
+        reader.onload = (e: any) => {
+          this.previewUrl = e.target.result;
+        };
+      
+        reader.readAsDataURL(file);
+      }
+
+    onChangeFile(event: any) {
+        const file = event.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = (e: any) => {
+                this.previewUrl = e.target.result;
+            };
+
+            reader.readAsDataURL(file);
+        }
+        this.image = event.target.files[0];
     }
 
     updateTime() {
@@ -305,72 +318,89 @@ export class DashboardComponent implements OnInit {
     }
 
     showItemForm() {
-        this.showUsers = false;
-        this.showOrder = false;
-        this.showItem = false;
-        this.showSession = false;
-        this.showTransaction = false;
-        this.profileEditButton = false;
-        this.profileSubmitButton = false;
-        this.showSystemOrder = false;
-        this.showUsers = false;
-        this.hasShowItemForm = true;
-        this.showProfile = false;
-
+        DashboardComponent.currentDashboard = 'createItem';
     }
 
     showProfileForm() {
-
-        this.showOrder = false;
-        this.showItem = false;
-        this.showSession = false;
-        this.showTransaction = false;
-        this.profileEditButton = true;
-        this.profileSubmitButton = false;
-        this.showSystemOrder = false;
-        this.showUsers = false;
-
-        var dob = new Date(this.user.birthday).getDay()
-
-        this.profileForm = this.formBuilder.group({
-            name: [this.user.name, Validators.required],
-            address: [this.user.address, Validators.required],
-            birthday: [this.user.birthday, Validators.required],
-            phone: [this.user.phone, Validators.required]
-        })
-        this.showProfile = true;
-
+        DashboardComponent.currentDashboard = 'myProfile';
     }
 
     showSessionForm() {
-        this.showSystemOrder = false;
-        this.hasShowSessionForm = true;
-        this.showUsers = false;
-        this.showProfile = false;
-        this.showOrder = false;
-
-    }
-
-    requestEditProfile() {
-        this.editing = true;
-        this.profileSubmitButton = true;
-        this.profileEditButton = false;
-        this.showSystemOrder = false;
-        this.showUsers = false;
-        this.showProfile = true;
-        this.showOrder = false;
-
+        DashboardComponent.currentDashboard = 'createSession';
     }
 
     createItem() {
-        this.itemService.createOne(this.newItem, this.user);
+        if (!this.image) {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Vui lòng kiểm tra lại!',
+                detail: 'Phải tải lên ít nhất một ảnh!'
+              })
+            return;
+        }
+
+        if (this.newItem.plateNumber == '') {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Vui lòng kiểm tra lại!',
+              detail: 'Biển số xe không được để trống!'
+            })
+            return;
+        }
+    
+        if (this.newItem.vendor == '') {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Vui lòng kiểm tra lại!',
+                detail: 'Nhãn hiệu không được để trống!'
+            })
+        return;
+        }
+      
+        if (this.newItem.type == '') {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Vui lòng kiểm tra lại!',
+              detail: 'Loại xe không được để trống!'
+            })
+            return;
+        }
+
+        let formData = new FormData();
+
+        //formData.append('image', this.itemImage);
+        console.log(this.image);
+        formData.append('plateNumber', this.newItem.plateNumber);
+        formData.append('vendor', this.newItem.vendor);
+        formData.append('type', this.newItem.type);
+        formData.append('image', this.image, this.image.name);
+        formData.append('imageName', this.image.name);
+
+        // console.log(this.newItem);
+        // this.newItem.images = this.uploadedFiles;
+        
+        console.log(formData);
+        this.itemService.createOne(formData, this.user);
         window.location.reload();
         this.messageService.add({
             severity: 'success',
             summary: 'Tạo vật phẩm mới!'
         })
+
+
+        DashboardComponent.currentDashboard = 'myItems';
+
     }
 
+    imageOnSelect(event: any) {
+        this.image = event.target;
+        console.log(this.image);
+    }
+
+    imageOnUpload(event: any) {
+        console.log(event.files);
+
+    }
     logOut() {
         this.userService.logout();
         this.messageService.add({
@@ -381,7 +411,6 @@ export class DashboardComponent implements OnInit {
 
     createSession() {
         var newSession: any = {
-            id: 0,
             startTime: this.newSession.startTime,
             closeTime: this.newSession.closeTime,
             initiatePrice: this.newSession.initiatePrice,
@@ -390,22 +419,34 @@ export class DashboardComponent implements OnInit {
             currentPrice: this.newSession.initiatePrice,
             item: this.formGroup.get('itemSelector')?.value,
         }
-        this.sessionService.createOne(newSession);
+
         newSession.item.status = "not_available";
-        this.itemService.saveOne(newSession.item).subscribe();
+
+        var updateItme: any = {
+            id: newSession.item.id,
+            status: "not_available"
+        }
+        this.itemService.saveOne(updateItme).subscribe((res: any) => {
+
+        });
+
+        this.sessionService.createOne(newSession);
+        //console.log(newSession.item);
+        //this.itemService.saveOne(newSession.item);
         window.location.reload();
         this.messageService.add({
             severity: 'success',
             summary: 'Tạo phiên đấu giá mới!'
         })
+        this.showRunningSession();
     }
 
     cancelCreateSession() {
-        this.hasShowSessionForm = false;
+        this.showRunningSession()
     }
 
     cancelCreateItem() {
-        this.hasShowItemForm = false;
+        DashboardComponent.currentDashboard = 'myItems';
     }
 
     filterResults(text: string) {
@@ -416,16 +457,9 @@ export class DashboardComponent implements OnInit {
             session => session.item.plateNumber.toLowerCase().includes(text.toLowerCase())
         );
     }
-    showRunningSession () {
-        this.showFilter = true; 
 
-        this.showSystemOrder = false;
-        this.showUsers = false;
-        this.showProfile = false;
-        this.showSession = true;
-        this.showItem = false;
-        this.showTransaction = false;
-        this.showOrder = false;
+    showRunningSession() {
+        DashboardComponent.currentDashboard = 'runningSession';
 
         this.sessionService.getAllSessions().subscribe((res: any) => {
             this.sessionList = res;
@@ -439,14 +473,7 @@ export class DashboardComponent implements OnInit {
     }
 
     showMyItem() {
-        this.showSystemOrder = false;
-        this.showUsers = false;
-        this.showProfile = false;
-        this.showItem = true;
-        this.showSession = false;
-        this.showTransaction = false;
-        this.showOrder = false;
-
+        DashboardComponent.currentDashboard = 'myItems';
         if (this.role == 1) {
             this.messageService.add({
                 severity: 'success',
@@ -461,14 +488,7 @@ export class DashboardComponent implements OnInit {
     }
 
     showMyOrder() {
-        this.showItem = false;
-        this.showSession = false;
-        this.showUsers = false;
-        this.showProfile = false;
-        this.showTransaction = false;
-        this.showOrder = true;
-        this.showSystemOrder = false;
-
+        DashboardComponent.currentDashboard = 'myOrders';
         this.sessionService.getAllSessionsByWinnerId(this.user.id).subscribe((res: any) => {
             this.orderList = res;    
         })
@@ -479,15 +499,8 @@ export class DashboardComponent implements OnInit {
     }
 
     showSystemOrders () {
-        this.showItem = false;
-        this.showSession = false;
-        this.showTransaction = false;
-        this.showUsers = false;
-        this.showProfile = false;
-        this.showSystemOrder = true;
-
+        DashboardComponent.currentDashboard = 'systemOrders'
         this.sessionService.getOrder().subscribe((res: any) => {
-            //console.log(res);
             this.systemOrderList = res;
     
         })
@@ -496,7 +509,10 @@ export class DashboardComponent implements OnInit {
             summary: 'Hiển thị lịch sử thắng đấu giá của mọi người!'
         })
     }
+
     showMyTransaction() {
+        DashboardComponent.currentDashboard = 'myTransactions';
+
         this.summary = 0;
         this.transactionService.getAllTransaction(this.user.id).subscribe((res: any) => {
             this.transactionList = res;
@@ -507,69 +523,15 @@ export class DashboardComponent implements OnInit {
                 this.summary += i.money;
             }
         });
-        this.showSystemOrder = false;
-        this.showUsers = false;
-        this.showProfile = false;
-        this.showOrder = false;
-        this.showItem = false;
-        this.showSession = false;
-        this.showTransaction = true;
+
         this.messageService.add({
             severity: 'info',
             summary: 'Hiển thị lịch sử đặt giá!'
         })
     }
 
-    onSubmitProfile() {
-        this.editing = true;
-        if (this.f['phone'].value == this.user.phone &&
-        this.f['name'].value == this.user.name &&
-        this.f['birthday'].value == this.user.birthday &&
-        this.f['address'].value == this.user.address) {
-            this.messageService.add({
-                severity: 'error',
-                summary: 'Vui lòng kiểm tra lại!',
-                detail: 'Không có gì thay đổi!'
-            })
-            return;
-        } else {
-            this.user.phone = this.f['phone'].value;
-            this.user.name = this.f['name'].value;
-            this.user.birthday = this.f['birthday'].value;
-            this.user.address = this.f['address'].value;
-
-            this.userService.updateProfile(this.user).subscribe(
-                (res: any) => {
-                    this.messageService.add({
-                        severity: 'success',
-                        summary: 'Cập nhật thành công!',
-                        detail: 'Thông tin của ' + this.f['name'].value + ' đã được lưu lại!'
-                    });
-                    this.editing = false;
-                    this.profileEditButton = true;
-                    this.profileSubmitButton = false;
-                },
-                (error) => {
-                    this.messageService.add({
-                        severity: 'error',
-                        summary: error.error.message,
-                        detail: 'Vui lòng kiểm tra lại!'
-                    })
-                }
-            )
-        }
-    }
-
     onCancelProfile() {
-        this.showProfile = false;
-        this.editing = false;
-        this.showUsers = false;
-        this.showOrder = false;
-
-    }
-
-    get f() {
-        return this.profileForm.controls;
+        DashboardComponent.currentDashboard = null;
     }
 
     get userForm() {
@@ -577,14 +539,7 @@ export class DashboardComponent implements OnInit {
     }
 
     createNewUser() {
-        this.showNewUserForm = true;
-        this.showItem = false;
-        this.showSession = false;
-        this.showTransaction = false;
-        this.showOrder = false;
-        this.showSystemOrder = false;
-        this.showUsers = false;
-
+        DashboardComponent.currentDashboard = 'createUser';
         this.newUserForm = this.formBuilder.group({
             name: ['', Validators.required],
             username: ['', Validators.required],
@@ -594,7 +549,7 @@ export class DashboardComponent implements OnInit {
     }
 
     onCancelCreateUser() {
-        this.showNewUserForm = false;
+        DashboardComponent.currentDashboard = null;
     }
 
     onSubmitCreateUser() {
@@ -653,7 +608,6 @@ export class DashboardComponent implements OnInit {
                     summary: 'Đăng ký thành công!',
                     detail: 'Người dùng mới: ' + user.name
                 });
-                this.showNewUserForm = false;
                 window.location.reload();
             },
             (error) => {
@@ -666,8 +620,7 @@ export class DashboardComponent implements OnInit {
         );
     }
 
-    isEmail(search:string):boolean
-    {
+    isEmail(search: string): boolean {
         const expression: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
         const email: string = search;
@@ -675,4 +628,38 @@ export class DashboardComponent implements OnInit {
         return result
     }
 
+
+    public getCurrentDashboard() {
+        return DashboardComponent.currentDashboard;
+    }
+
+    showOrderDetail(sessionId: number) {
+        this.visibleOrderDetail = true;
+        var item_t: any;
+        var user_t: any;
+        var detail: any;
+        this.sessionService.getOne(sessionId).subscribe((res: any) => {
+            this.itemService.getOne(res.item.id).subscribe((item: any) => {
+                item_t = item;
+                this.userService.getOne(item_t.ownerId).subscribe((user: any) => {
+                    user_t = user;
+                    detail = {
+                        sessionId: sessionId,
+                        price: res.currentPrice,
+                        owner: user_t.name,
+                        time: new Date(res.closeTime)
+                    }
+                    this.orderDetail = "Người bán: <b>" + detail.owner + '</b> <br>';
+                    this.orderDetail += "Người mua: <b>" + this.user.name + '</b><br>';
+                    this.orderDetail += "Giá tiền: <b>" + detail.price + '</b><br>';
+                    this.orderDetail += "Thời gian: <b>" + detail.time + '</b><br>';
+                    this.orderDetail += "Thanh toán: Thanh toán khi nhận hàng";
+                    console.log(this.orderDetail);
+
+                })
+            })
+
+
+        })
+    }
 }

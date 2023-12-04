@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!--DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,50 +6,44 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Sign Up Form by Colorlib</title>
 
-    <!-- Font Icon -->
+
     <link href="/src/assets/css/material-design-iconic-font.min.css">
 </head>
-<body>
-
-        
+<body-->
 
 <!-- Sign up form -->
-<div class="card">
-    <h2 class="form-title">Đăng ký người dùng mới</h2>
-    <form [formGroup]="form" class="card flex justify-content-center" id="register-form">
-        <div class="flex flex-column gap-2">
-            <label htmlFor="username">Tên người dùng</label> <br>
-            <input type="text" pInputText name="username" id="username" placeholder="ricky4" formControlName="username"/> 
-            <p></p>
+<div class="flex justify-content-center flex-wrap align-items-center">
+    <div class="p-4 shadow-2 border-round w-full lg:w-6 surface-50">
+        <div class="text-center mb-5">
+            <img src="https://w7.pngwing.com/pngs/117/903/png-transparent-computer-icons-bidding-auction-business-service-bid-angle-trademark-service-thumbnail.png" alt="Image" height="50" class="mb-3">
+            <div class="text-900 text-3xl font-medium mb-3">Tạo tài khoản</div>
+            <span class="text-600 font-medium line-height-3">Bạn đã có tài khoản?</span>
+            <a routerLink="../signin" class="font-medium no-underline ml-2 text-blue-500 cursor-pointer">Đăng nhập đê!</a>
         </div>
-        <div class="form-group">
-            <label htmlFor="name">Họ và tên</label> <br>
-            <input type="text" pInputText name="name" id="name" placeholder="Trần Văn D" formControlName="name"/>
-            <p></p>
+        <div>
+            <form [formGroup]="form" id="register-form">    
+                <div class="block ">
+                    <label htmlFor="username" class="block text-900 font-medium mb-2">Tên người dùng</label>
+                    <input type="text" pInputText name="username" id="username" placeholder="ricky4" class="w-full mb-3" formControlName="username"/> 
+                </div>
+                <div class="block gap-2">
+                    <label htmlFor="name" class="block text-900 font-medium mb-2">Họ và tên</label>
+                    <input type="text" pInputText name="name" id="name" placeholder="Trần Văn D" class="w-full mb-3" formControlName="name"/>
+                </div>
+                <div class="block gap-2">
+                    <label htmlFor="email" class="block text-900 font-medium mb-2">Email</label>
+                    <input type="text" pInputText name="email" id="email" placeholder="ricky4@gmail.com" class="w-full mb-3" formControlName="email"/>
+                </div>
+                <div class="block gap-2">
+                    <label htmlFor="password" class="block text-900 font-medium mb-2">Mật khẩu</label>
+                    <input type="password" pInputText name="pass" id="pass" placeholder="Bí mật" class="w-full mb-3" formControlName="password"/>
+                </div>
+                <div class="form-group">
+                    <label class="label-agree-term"><span><span></span></span>Nếu nhấp vào nút đăng ký này, tôi đã đồng ý với<a href="https://longcg18.github.io/" class="font-medium no-underline ml-2 text-blue-500 cursor-pointer">điều khoản dịch vụ</a></label>
+                </div>
+            </form>
+            <button label="Đăng ký" pButton pRipple icon="pi pi-user" class="w-full" (click)="onSubmit()"></button>
         </div>
-        <div class="form-group">
-            <label htmlFor="email">Email</label> <br>
-            <input type="text" pInputText name="email" id="email" placeholder="ricky4@gmail.com" formControlName="email"/>
-            <p></p>
-        </div>
-        <div class="form-group">
-            <label htmlFor="password">Mật khẩu</label> <br>
-            <input type="password" pInputText name="pass" id="pass" placeholder="Bí mật" formControlName="password"/>
-            <p></p>
-        </div>
-        <div class="form-group">
-            <label class="label-agree-term"><span><span></span></span>Nếu nhấp vào nút đăng ký này, tôi đã đồng ý với <a href="https://longcg18.github.io/" class="term-service">điều khoản dịch vụ</a></label>
-        </div>
-        <p></p>
-        <p-button label="Đăng ký" (click)="onSubmit()"></p-button>
-    </form>
+    </div>
 </div>
-<!--div class="signup-image">
-    <figure><img src="../../assets/images/signup-image.jpg" alt="sign up image"></figure>
-    
-</div-->
-<p></p>
-<a routerLink="../signin" class="signup-image-link">Tôi đã có tài khoản</a>
-</body>
-</html>
 <router-outlet></router-outlet>
